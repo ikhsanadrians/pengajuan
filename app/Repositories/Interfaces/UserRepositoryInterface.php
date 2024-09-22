@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Interfaces;
 
-interface UserRepositoryInterface
+interface UserRepositoryerface
 {
 public function getAllUsers();
 public function getUserById($id);
