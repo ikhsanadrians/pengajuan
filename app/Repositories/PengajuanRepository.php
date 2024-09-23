@@ -1,45 +1,36 @@
-<?php 
+<?php
 
 namespace App\Repositories;
 
-use App\Repositories\Interfaces\PengajuanBarangRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\Interfaces\PengajuanBarangRepositoryInterface;
 
-class PengajuanRepository implements PengajuanBarangRepositoryInterface
+class PengajuanRepository
 {
-    public function getAllPengajuan()
+    public function getAllPengajuanBarangs()
     {
-        return DB::table('pengajuan')->get();
+        return DB::table('pengajuan_barang')->get();
     }
 
-    public function getPengajuanById($id)
+    public function getPengajuanBarangById($id)
     {
-        return DB::table('pengajuan')->where('id', $id)->first();
+        return DB::table('pengajuan_barang')->where('id', $id)->first();
     }
 
-    public function approvePengajuan($id, $approveType, array $data)
+    public function approvePengajuanBarang($id, $approveType, array $data)
     {
-        return DB::table('pengajuan')->where('id', $id)->update(['status' => $approveType]);
+        return DB::table('pengajuan_barang')->where('id', $id)->update(array_merge(['status' => $approveType], $data));
     }
 
-    public function createPengajuan(array $data)
+    public function createPengajuanBarang(array $data)
     {
-        return DB::table('pengajuan')->insert($data);
+        return DB::table('pengajuan_barang')->insert($data);
     }
 
-    public function createTransaksi(array $data){
-        return DB::table('transaksi')->insert($data);
-    }
-
-
-    public function updatePengajuan($id, array $data)
+    public function deletePengajuanBarang($id)
     {
-        return DB::table('pengajuan')->where('id', $id)->update($data);
-    }   
-
-    public function deletePengajuan($id)
-    {
-        return DB::table('pengajuan')->where('id', $id)->delete();
+        return DB::table('pengajuan_barang')->where('id', $id)->delete();
     }
-}           
+}
 
+?>

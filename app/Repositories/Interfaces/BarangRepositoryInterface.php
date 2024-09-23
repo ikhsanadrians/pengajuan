@@ -10,6 +10,7 @@ interface BarangRepositoryInterface
     public function createBarang(array $data);
     public function updateBarang($id, array $data);
     public function deleteBarang($id);
+
 }
 
 
