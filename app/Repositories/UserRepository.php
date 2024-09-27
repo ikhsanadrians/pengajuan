@@ -5,7 +5,7 @@ namespace App\Repositories;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository
 {
     public function getAllUsers()
     {

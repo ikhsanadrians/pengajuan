@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use App\Repositories\Interfaces\DepartementsRepositoryInterface;
 
-class DepartemenRepository implements DepartementsRepositoryInterface
+
+class DepartemenRepository
 {
     public function getAllDepartements()
     {

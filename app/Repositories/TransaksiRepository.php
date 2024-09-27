@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Repositories\Interfaces\TransaksiRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class TransaksiRepository implements TransaksiRepositoryInterface
+class TransaksiRepository
 {
     public function getAllTransaksis()
     {

@@ -21,11 +21,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(BarangRepositoryInterface::class, BarangRepository::class);
-        $this->app->bind(PengajuanBarangRepositoryInterface::class, PengajuanRepository::class);
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(TransaksiRepositoryInterface::class, TransaksiRepository::class);
-        $this->app->bind(TransaksiStokRepositoryInterface::class, TransaksiStokRepository::class);
+        $this->app->bind(BarangRepository::class, function ($app) {
+            return new BarangRepository();
+        });
+        $this->app->bind(UserRepository::class, function ($app) {
+            return new UserRepository();
+        });
+        $this->app->bind(TransaksiRepository::class, function ($app) {
+            return new TransaksiRepository();
+        });
+        $this->app->bind(TransaksiStokRepository::class, function ($app) {
+            return new TransaksiStokRepository();
+        });
     }
 
     /**

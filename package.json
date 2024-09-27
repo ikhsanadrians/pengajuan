@@ -19,6 +19,8 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
+        "@primevue/themes": "^4.0.7",
+        "primeicons": "^7.0.0",
         "primevue": "^4.0.7"
     }
 }

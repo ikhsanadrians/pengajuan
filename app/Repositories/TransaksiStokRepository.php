@@ -6,7 +6,7 @@ namespace App\Repositories;
 use App\Repositories\Interfaces\TransaksiStokRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class TransaksiStokRepository implements TransaksiStokRepositoryInterface
+class TransaksiStokRepository
 {
     public function getAllTransaksiStoks()
     {

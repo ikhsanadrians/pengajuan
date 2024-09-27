@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use App\Repositories\Interfaces\BarangRepositoryInterface;
 
-class BarangRepository implements BarangRepositoryInterface
+
+class BarangRepository
 {
     public function getAllBarangs()
     {

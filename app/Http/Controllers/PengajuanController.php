@@ -8,7 +8,7 @@ use App\Repositories\PengajuanRepository;
 
 class PengajuanController extends Controller
 {
-    protected $pengajuanRepo;
+    protected $pengajuanBarangRepository;
 
     public function __construct($pengajuanRepository)
     {
