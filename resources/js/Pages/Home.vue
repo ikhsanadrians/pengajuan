@@ -5,14 +5,21 @@ import Navbar from '@/Components/Navbar.vue';
 import Chart from '@/Components/Chart.vue';
 import TableApprovalRequest from '@/Components/TableApprovalRequest.vue';
 
+defineProps({
+  transaksis: {
+    type: Array,
+    default: () => [],
+  },
+});
 
 </script>
 <template>
    <Navbar/>
    <div class="container mx-auto py-5 px-20">
     <Chart/>
-    <TableApprovalRequest/>
+    <TableApprovalRequest :transaksidata="transaksis"/>
    </div>
+
 
 
 </template>

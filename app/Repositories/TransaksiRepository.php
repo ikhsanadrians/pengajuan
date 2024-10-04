@@ -12,6 +12,10 @@ class TransaksiRepository
         return DB::table('transaksi')->get();
     }
 
+    public function getAllTransaksisAdmin(){
+        return DB::table('transaksi')->where('status_id','=','1')->get();
+    }
+
     public function getTransaksiById($id)
     {
         return DB::table('transaksi')->where('id', $id)->first();
