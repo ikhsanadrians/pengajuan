@@ -7,64 +7,36 @@ import Button from 'primevue/button';
 import DatePicker from 'primevue/datepicker';
 import { ref } from 'vue';
 
-
 let dates = ref();
 
 defineProps({
-  transaksis: {
+  transaksidata: {
     type: Array,
     default: () => [],
   }
 });
-
 </script>
 
 <template>
-    <div class="card mt-8">
-        <DataTable tableStyle="min-width: 50rem" class="shadow-md rounded-lg overflow-hidden">
-          <template #header>
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <span class="text-lg font-bold">Pengajuan</span>
-              <div class="inputs flex items-center gap-x-3">
-                <DatePicker v-model="dates" selectionMode="range" :manualInput="false" placeholder="Pilih Rentang Tanggal" />
-                <Select v-model="selectedCountry" :options="countries" filter optionLabel="name"
-                  placeholder="Pilih Status" class="w-full md:w-56">
-                  <template #value="slotProps">
-                    <div v-if="slotProps.value" class="flex items-center">
-                      <img :alt="slotProps.value.label"
-                        src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
-                        :class="`mr-2 flag flag-${slotProps.value.code.toLowerCase()}`"
-                        style="width: 18px" />
-                      <div>{{ slotProps.value.name }}</div>
-                    </div>
-                    <span v-else>
-                      {{ slotProps.placeholder }}
-                    </span>
-                  </template>
-                  <template #option="slotProps">
-                    <div class="flex items-center">
-                      <img :alt="slotProps.option.label"
-                        src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
-                        :class="`mr-2 flag flag-${slotProps.option.code.toLowerCase()}`"
-                        style="width: 18px" />
-                      <div>{{ slotProps.option.name }}</div>
-                    </div>
-                  </template>
-                </Select>
-                <div class="card flex justify-center">
-                  <InputText type="text" v-model="value" placeholder="Cari Kode" />
-                </div>
-                <Button icon="pi pi-search" iconPos="top" />
-              </div>
+  <div class="card mt-8">
+    <DataTable :value="transaksidata" tableStyle="min-width: 50rem" class="shadow-md rounded-lg overflow-hidden">
+      <template #header>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-lg font-bold">Pengajuan</span>
+          <div class="inputs flex items-center gap-x-3">
+            <DatePicker v-model="dates" selectionMode="range" :manualInput="false" placeholder="Pilih Rentang Tanggal" />
+            <Select v-model="selectedCountry" :options="countries" filter optionLabel="name" placeholder="Pilih Status" class="w-full md:w-56" />
+            <div class="card flex justify-center">
+              <InputText type="text" v-model="value" placeholder="Cari Kode" />
             </div>
-            
-          </template>
-          <table>
-            <tr v-for="transaksi in transaksis" :key="transaksi.id">
-                <td>{{ transaksi.id }}</td>
-            </tr>
-          </table>
-
-        </DataTable>
-      </div>
+            <Button icon="pi pi-search" iconPos="top" />
+          </div>
+        </div>
+      </template>
+      <Column field="id" header="ID"></Column>
+      <Column field="name" header="Nama"></Column>
+      <Column field="status" header="Status"></Column>
+      <Column field="date" header="Tanggal"></Column>
+    </DataTable>
+  </div>
 </template>

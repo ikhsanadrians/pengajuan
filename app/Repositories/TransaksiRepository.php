@@ -13,7 +13,14 @@ class TransaksiRepository
     }
 
     public function getAllTransaksisAdmin(){
-        return DB::table('transaksi')->where('status_id','=','1')->get();
+
+        return DB::table('transaksi')
+        ->join('status', 'transaksi.status_id', '=', 'status.id')
+        ->leftJoin('barangs', 'transaksi.barang_id', '=', 'barangs.id') // Menggunakan tabel 'barangs'
+        ->select('transaksi.id', 'barangs.namabarang as name', 'status.nameexternal as status', 'transaksi.created_at as date') // 'namabarang' untuk nama barang, 'nameexternal' untuk nama status
+        ->where('transaksi.status_id', '=', 1)
+        ->get();
+
     }
 
     public function getTransaksiById($id)
