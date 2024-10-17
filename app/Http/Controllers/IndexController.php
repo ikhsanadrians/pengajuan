@@ -13,11 +13,19 @@ class IndexController extends Controller
         $this->transaksiRepository = $transaksiRepository;
     }
 
-    public function index()
-    {
-        $transaksis = $this->transaksiRepository->getAllTransaksisAdmin();
 
 
-        return Inertia::render('Home',['transaksis' => $transaksis]);
+    public function adminIndex(){
+        // $transaksis = $this->transaksiRepository->getAllTransaksisAdmin();
+        return Inertia::render('Admin/Dashboard');
     }
+
+
+    public function userIndex(){
+        return Inertia::render('User/Dashboard');
+    }
+    public function ownerIndex(){
+        return Inertia::render('Owner/Dashboard');
+    }
+
 }

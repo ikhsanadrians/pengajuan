@@ -16,22 +16,14 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ])->group(function () {
-//     Route::get('/', function () {
-//         return Inertia::render('Dashboard');
-//     })->name('dashboard');
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', [
+//         'canLogin' => Route::has('login'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
 // });
 
-Route::get('/', [IndexController::class, 'index'])->name('login');
+Route::get('/admin', [IndexController::class, 'adminIndex'])->name('admin');
+Route::get('/', [IndexController::class,'userIndex'])->name('user');
+Route::get('/owner', [IndexController::class,'ownerIndex'])->name('owner');  

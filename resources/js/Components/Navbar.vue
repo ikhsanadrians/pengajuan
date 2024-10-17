@@ -6,7 +6,7 @@ import Avatar from 'primevue/avatar';
 </script>
 <template>
     <div class="bg-white h-16 shadow-sm border-b-[1.5px] border-gray-300">
-        <div class="container mx-auto flex w-full items-center h-full">
+        <div class="container mx-auto px-8 flex w-full items-center h-full">
             <div class="w-full flex justify-between items-center py-8">
                 <Link class="flex items-center font-bold" href="/">
                   <div class="flex flex-col">

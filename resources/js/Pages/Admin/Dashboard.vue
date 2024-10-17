@@ -6,10 +6,10 @@ import Chart from '@/Components/Chart.vue';
 import TableApprovalRequest from '@/Components/TableApprovalRequest.vue';
 
 defineProps({
-  transaksis: {
-    type: Array,
-    default: () => [],
-  },
+//   transaksis: {
+    // type: Array,
+    // default: () => [],
+//   },
 });
 
 </script>
@@ -17,7 +17,7 @@ defineProps({
    <Navbar/>
    <div class="container mx-auto py-5 px-20">
     <Chart/>
-    <TableApprovalRequest :transaksidata="transaksis"/>
+    <!-- <TableApprovalRequest :transaksidata="transaksis"/> -->
    </div>
 
 
