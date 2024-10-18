@@ -14,7 +14,7 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
+    username: '',
     password: '',
     remember: false,
 });
@@ -23,7 +23,7 @@ const submit = () => {
     form.transform(data => ({
         ...data,
         remember: form.remember ? 'on' : '',
-    })).post(route('login'), {
+    })).post(route('loginPost'), {
         onFinish: () => form.reset('password'),
     });
 };
@@ -43,11 +43,11 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="username" value="Username" />
                 <TextInput
                     id="email"
-                    v-model="form.email"
-                    type="email"
+                    v-model="form.username"
+                    type="text"
                     class="mt-1 block w-full"
                     required
                     autofocus

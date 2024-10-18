@@ -1,11 +1,18 @@
 <script setup>
   import Card from 'primevue/card';
 
+defineProps({
+   username: {
+    type: String,
+   }
+});
+
+
 </script>
 <template>
     <div>
         <div class="title font-bold text-lg">
-            <h1>Welcome Back Admin!</h1>
+            <h1>Welcome Back {{ username }}</h1>
         </div>
         <div class="grid grid-cols-3 gap-x-4">
             <Card class="mt-4 !bg-yellow-500 !text-yellow-800">

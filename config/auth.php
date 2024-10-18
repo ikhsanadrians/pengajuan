@@ -61,7 +61,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'trikencana',
             'model' => App\Models\User::class,
         ],
 

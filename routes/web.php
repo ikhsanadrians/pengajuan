@@ -4,6 +4,8 @@ use App\Http\Controllers\IndexController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,14 +18,24 @@ use Inertia\Inertia;
 |
 */
 
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//         'laravelVersion' => Application::VERSION,
-//         'phpVersion' => PHP_VERSION,
-//     ]);
-// });
 
-Route::get('/admin', [IndexController::class, 'adminIndex'])->name('admin');
-Route::get('/', [IndexController::class,'userIndex'])->name('user');
-Route::get('/owner', [IndexController::class,'ownerIndex'])->name('owner');  
+
+
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/login', [AuthController::class, 'loginPost'])->name('loginPost');
+
+
+    Route::middleware(['auth'])->group(function () {
+        // Rute yang memerlukan role admin
+        Route::middleware(['check.role:admin'])->group(function () {
+            Route::get('/admin', [IndexController::class, 'adminIndex'])->name('admin');
+        });
+
+        // Rute yang memerlukan role owner
+        Route::middleware(['check.role:owner'])->group(function () {
+            Route::get('/owner', [IndexController::class, 'ownerIndex'])->name('owner');
+        });
+
+        // Rute umum untuk user yang sudah login
+        Route::get('/', [IndexController::class, 'userIndex'])->name('user');
+    });
