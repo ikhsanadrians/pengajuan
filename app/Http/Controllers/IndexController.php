@@ -22,7 +22,9 @@ class IndexController extends Controller
 
 
     public function userIndex(){
-        return Inertia::render('User/Dashboard');
+        $transaksis = $this->transaksiRepository->getAllTransaksisUser();
+
+        return Inertia::render('User/Dashboard', ["transaksis" => $transaksis]);
     }
     public function ownerIndex(){
         return Inertia::render('Owner/Dashboard');

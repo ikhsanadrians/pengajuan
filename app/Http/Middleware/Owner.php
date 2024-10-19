@@ -19,11 +19,11 @@ class Owner
     {
 
         if (!Auth::check()) {
-            return redirect()->back();
+            return redirect()->route('login');
         }
 
         if(Auth::user()->id !=  2){
-            return redirect()->back();
+            return redirect()->route('login');
         }
 
 

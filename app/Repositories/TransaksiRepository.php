@@ -4,18 +4,28 @@ namespace App\Repositories;
 
 use App\Repositories\Interfaces\TransaksiRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TransaksiRepository
 {
-    public function getAllTransaksis()
+    public function getAllTransaksisUser()
     {
-        return DB::table('transaksi')->get();
+        $loginedUser = Auth::user()->id ?? null;
+
+        return DB::table('transaksi as tr')
+        ->leftJoin('barangs', 'tr.barang_id', '=', 'barangs.id')
+        ->leftJoin('pengajuanbarang as pb', 'pb.id' ,'=' ,'tr.pengajuan_id')
+        ->where('pb.user_id', $loginedUser)
+        ->select('tr.id', 'barangs.namabarang as name', 'tr.created_at as date', 'pb.*')
+        ->get();
+
+
     }
 
     public function getAllTransaksisAdmin(){
 
         return DB::table('transaksi')
-        ->leftJoin('barangs', 'transaksi.barang_id', '=', 'barangs.id') 
+        ->leftJoin('barangs', 'transaksi.barang_id', '=', 'barangs.id')
         ->select('transaksi.id', 'barangs.namabarang as name', 'transaksi.created_at as date')
         ->get();
 

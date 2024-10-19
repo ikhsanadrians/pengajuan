@@ -20,11 +20,11 @@ class Admin
     {
 
         if (!Auth::check()) {
-            return redirect()->back();
+            return redirect()->route('login');
         }
 
         if(Auth::user()->id !=  1){
-            return redirect()->back();
+            return redirect()->route('login');
         }
 
 

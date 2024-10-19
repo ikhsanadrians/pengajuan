@@ -17,11 +17,11 @@ class User
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return redirect()->back();
+            return redirect()->route('login');
         }
 
         if(Auth::user()->id !=  3){
-            return redirect()->back();
+            return redirect()->route('login');
         }
 
         return $next($request);
