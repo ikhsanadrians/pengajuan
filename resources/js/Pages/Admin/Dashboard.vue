@@ -14,15 +14,18 @@ defineProps({
 });
 
 const page = usePage();
-const userData = page.props.auth.user;
+
+// const userData = page.props.auth.user;
 
 
 
 </script>
 <template>
    <Navbar/>
+   <p>Admin</p>
    <div class="container mx-auto py-5 px-20">
     <Chart :username="userData.name" />
+   {{ user }}
     <!-- <TableApprovalRequest :transaksidata="transaksis"/> -->
    </div>
 

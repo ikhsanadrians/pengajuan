@@ -20,7 +20,8 @@ const userData = page.props.auth.user;
 
 </script>
 <template>
-   <Navbar/>
+   <Navbar/> 
+   <p>User</p>
    <div class="container mx-auto py-5 px-20">
     <Chart :username="userData.name" />
     <!-- <TableApprovalRequest :transaksidata="transaksis"/> -->
