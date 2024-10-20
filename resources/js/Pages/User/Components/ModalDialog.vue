@@ -7,6 +7,10 @@ import Select from 'primevue/select';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import Button from 'primevue/button';
+import Panel from 'primevue/panel';
+import Card from 'primevue/card';
+
+
 
 // Menerima prop dari parent
 const props = defineProps({
@@ -55,7 +59,116 @@ const closeDialog = () => {
                 <Button icon="pi pi-plus" label="Tambah" aria-label="Save" />
             </div>
         </div>
-        <div class="flex justify-end gap-2">
+        <label for="username" class="font-semibold w-full">Daftar Barang Diajukan</label>
+        <div class="w-full h-[10rem] overflow-y-scroll">
+            <div class="card-wrappers flex flex-col gap-y-3 my-4 pr-4">
+                <Card class="border-[1.3px]">
+                    <template #content>
+                        <div class="twrappers flex items-start justify-start gap-x-3">
+                            <div class="icons-bg bg-emerald-100 w-fit h-fit p-4 grid place-items-center rounded-full">
+                                <i class="pi pi-box text-emerald-600" style="font-size: 20px"></i>
+                            </div>
+                            <div class="tblnbtn flex justify-between items-start w-full">
+                                <table class="w-fit">
+                                    <tr>
+                                        <th class="text-left">Nama Barang</th>
+                                        <td class="text-left px-3">Lenovo Thinkpad</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left">Jumlah</th>
+                                        <td class="text-left px-3">2</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left">Keterangan</th>
+                                        <td class="text-left px-3">Blabla bla</td>
+                                    </tr>
+                                </table>
+                                <div class="btn-action flex items-center gap-x-2">
+                                    <div class="bg-yellow-100 w-fit h-fit p-4 rounded-full grid place-items-center">
+                                        <i class="pi pi-pen-to-square text-yellow-600" style="font-size: 15px"></i>
+                                    </div>
+                                    <div class="bg-red-100 w-fit h-fit p-4 rounded-full grid place-items-center">
+                                        <i class="pi pi-trash text-red-600" style="font-size: 15px"></i>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                        </div>
+                    </template>
+                </Card>
+                <Card class="border-[1.3px]">
+                    <template #content>
+                        <div class="twrappers flex items-start justify-start gap-x-3">
+                            <div class="icons-bg bg-emerald-100 w-fit h-fit p-4 grid place-items-center rounded-full">
+                                <i class="pi pi-box text-emerald-600" style="font-size: 20px"></i>
+                            </div>
+                            <div class="tblnbtn flex justify-between items-start w-full">
+                                <table class="w-fit">
+                                    <tr>
+                                        <th class="text-left">Nama Barang</th>
+                                        <td class="text-left px-3">Lenovo Thinkpad</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left">Jumlah</th>
+                                        <td class="text-left px-3">2</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left">Keterangan</th>
+                                        <td class="text-left px-3">Blabla bla</td>
+                                    </tr>
+                                </table>
+                                <div class="btn-action flex items-center gap-x-2">
+                                    <div class="bg-yellow-100 w-fit h-fit p-4 rounded-full grid place-items-center">
+                                        <i class="pi pi-pen-to-square text-yellow-600" style="font-size: 15px"></i>
+                                    </div>
+                                    <div class="bg-red-100 w-fit h-fit p-4 rounded-full grid place-items-center">
+                                        <i class="pi pi-trash text-red-600" style="font-size: 15px"></i>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                        </div>
+                    </template>
+                </Card>
+                <Card class="border-[1.3px]">
+                    <template #content>
+                        <div class="twrappers flex items-start justify-start gap-x-3">
+                            <div class="icons-bg bg-emerald-100 w-fit h-fit p-4 grid place-items-center rounded-full">
+                                <i class="pi pi-box text-emerald-600" style="font-size: 20px"></i>
+                            </div>
+                            <div class="tblnbtn flex justify-between items-start w-full">
+                                <table class="w-fit">
+                                    <tr>
+                                        <th class="text-left">Nama Barang</th>
+                                        <td class="text-left px-3">Lenovo Thinkpad</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left">Jumlah</th>
+                                        <td class="text-left px-3">2</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left">Keterangan</th>
+                                        <td class="text-left px-3">Blabla bla</td>
+                                    </tr>
+                                </table>
+                                <div class="btn-action flex items-center gap-x-2">
+                                    <div class="bg-yellow-100 w-fit h-fit p-4 rounded-full grid place-items-center">
+                                        <i class="pi pi-pen-to-square text-yellow-600" style="font-size: 15px"></i>
+                                    </div>
+                                    <div class="bg-red-100 w-fit h-fit p-4 rounded-full grid place-items-center">
+                                        <i class="pi pi-trash text-red-600" style="font-size: 15px"></i>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                        </div>
+                    </template>
+                </Card>
+            </div>
+          
+        </div>
+
+        <div class="flex justify-end gap-2 mt-4">
             <Button type="button" label="Cancel" severity="secondary" @click="closeDialog"></Button>
             <Button type="button" label="Save" @click="closeDialog"></Button>
         </div>
