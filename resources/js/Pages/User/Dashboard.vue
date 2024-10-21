@@ -8,26 +8,46 @@ import TableApprovalRequest from '@/Components/TableApprovalRequest.vue';
 import AddRequestBtn from '@/Pages/User/Components/AddRequestBtn.vue';
 import ModalDialog from './Components/ModalDialog.vue';
 import { ref } from 'vue';
+import Toast from 'primevue/toast';
 
-// Data dari page
+
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
 const page = usePage();
 const userData = page.props.auth.user;
-const modalVisibility = ref(false); // Mengontrol visibility modal
+const modalVisibility = ref(false);
 
-// Function untuk membuka modal
 const handleAddRequest = () => {
   modalVisibility.value = true;
 };
+
+defineProps({
+   barangs: {
+      type: Array,
+      default: () => [],
+   },
+   departements: {
+      type: Array,
+      default: () => [],
+   }
+});
+
+
+const loadToastMessage  = (toastSeverity,toastSummary, toastMessageDetail) => {
+    toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
+};
+
 </script>
-b
+
 <template>
   <Navbar />
   <div class="container mx-auto py-5 px-20">
     <Chart :username="userData.username" />
     <TableApprovalRequest :transaksidata="transaksis" />
   </div>
-  <!-- Button untuk membuka modal -->
   <AddRequestBtn @click="handleAddRequest" />
-  <!-- Menggunakan v-model untuk two-way binding antara parent dan child -->
-  <ModalDialog v-model:currentVisibility="modalVisibility" />
+  <ModalDialog v-model:currentVisibility="modalVisibility" :barangdata="barangs" :departementData="departements" :toastMessage="loadToastMessage" />
+  <Toast position="bottom-right" group="br" />
+
 </template>

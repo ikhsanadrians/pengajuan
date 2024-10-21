@@ -9,7 +9,7 @@ class BarangRepository
 {
     public function getAllBarangs()
     {
-        return DB::table('barang')->get();
+    return DB::table('barangs')->get()->all();
     }
 
     public function getBarangById($id)
