@@ -24,7 +24,7 @@ const page = usePage();
    <Navbar/>
    <p>Admin</p>
    <div class="container mx-auto py-5 px-20">
-    <Chart :username="userData.name" />
+    <Chart :username="userData.username" />
    {{ user }}
     <!-- <TableApprovalRequest :transaksidata="transaksis"/> -->
    </div>

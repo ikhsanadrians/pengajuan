@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Repositories\Interfaces\TransaksiRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon; // Use Carbon to handle dates
 
 class TransaksiRepository
 {
@@ -35,11 +36,18 @@ class TransaksiRepository
     {
         return DB::table('transaksi')->where('id', $id)->first();
     }
-
     public function createTransaksi(array $data)
     {
+        $data = array_merge($data, [
+            'statusenabled' => true, 
+            'created_at' => Carbon::now(), 
+            'updated_at' => Carbon::now()  
+        ]);
+
         return DB::table('transaksi')->insert($data);
     }
+
+    
 
     public function updateTransaksi($id, array $data)
     {

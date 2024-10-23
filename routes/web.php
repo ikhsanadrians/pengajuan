@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PengajuanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,4 +28,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // User Routes - Only accessible by users with user role
     Route::middleware('user')->group(function () {
         Route::get('/', [IndexController::class, 'userIndex'])->name('user');
+        Route::prefix('/user')->group(function(){
+            Route::post('/simpan-pengajuan-user', [PengajuanController::class, 'simpanPengajuanUser'])->name('simpan-pengajuan-user');
+        });
     });
+

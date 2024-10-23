@@ -24,7 +24,7 @@ class PengajuanRepository
 
     public function createPengajuanBarang(array $data)
     {
-        return DB::table('pengajuan_barang')->insert($data);
+        return DB::table('pengajuanbarang')->insertGetId($data);
     }
 
     public function deletePengajuanBarang($id)

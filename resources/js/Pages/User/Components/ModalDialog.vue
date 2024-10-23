@@ -8,6 +8,10 @@ import InputIcon from 'primevue/inputicon';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import EmptyBarang from '../../../../../public/ilustration/emptybarang.svg';
+import { useForm } from '@inertiajs/vue3';
+
+
+
 
 const props = defineProps({
     currentVisibility: {
@@ -51,23 +55,22 @@ const editIndex = ref(null);
 const tambahBarang = () => {
     if (selectedBarang.value && jumlahBarang.value && keteranganBarang.value) {
         if (editIndex.value !== null) {
-            // Jika sedang dalam mode edit, update barang di index tertentu
+
             daftarBarang.value[editIndex.value] = {
                 namabarang: selectedBarang.value.namabarang,
                 jumlah: jumlahBarang.value,
                 keterangan: keteranganBarang.value
             };
-            editIndex.value = null; // Reset index setelah update
+            editIndex.value = null; 
         } else {
-            // Jika tidak dalam mode edit, tambahkan barang baru ke daftar
             daftarBarang.value.unshift({
+                barang_id: selectedBarang.value.id,
                 namabarang: selectedBarang.value.namabarang,
                 jumlah: jumlahBarang.value,
                 keterangan: keteranganBarang.value
             });
         }
 
-        // Reset form input setelah menambah atau mengedit barang
 
         selectedBarang.value = null;
         jumlahBarang.value = '';
@@ -75,18 +78,16 @@ const tambahBarang = () => {
     }
 };
 
-// Fungsi untuk mengedit barang yang dipilih
 const editBarang = (index) => {
     const barang = daftarBarang.value[index];
     selectedBarang.value = props.barangdata.find(b => b.namabarang === barang.namabarang);
     jumlahBarang.value = barang.jumlah;
     keteranganBarang.value = barang.keterangan;
-    editIndex.value = index; // Set index barang yang sedang diedit
+    editIndex.value = index; 
 };
 
-// Fungsi untuk menghapus barang dari daftar
 const deleteBarang = (index) => {
-    daftarBarang.value.splice(index, 1); // Hapus barang berdasarkan index
+    daftarBarang.value.splice(index, 1); 
 };
 
 const isTambahBarangDisabled = ref(true);
@@ -96,20 +97,35 @@ watch([keteranganPengajuan, selectedDepartement], ([newKeterangan, newDepartemen
 });
 
 const simpanPengajuan = () => {
+    const URL = 'user/simpan-pengajuan-user';
+
     const pengajuan = {
-        departement: selectedDepartement.value,
-        keteranganPengajuan: keteranganPengajuan.value,
-        jumlahBarang: jumlahBarang.value,
-        barangDiajukan: daftarBarang.value
+        departement: selectedDepartement.value ?? null,
+        keteranganPengajuan: keteranganPengajuan.value ?? null,
+        barangDiajukan: daftarBarang ?? null
     };
 
-    props.toastMessage('success', 'Info', 'Berhasil Menambahkan Pengajuan')
+    
+    const form = useForm({
+        departement: pengajuan.departement.id,
+        keteranganPengajuan:  pengajuan.keteranganPengajuan,
+        barangDiajukan: pengajuan.barangDiajukan
+    });
 
-
+    form.post(URL,{
+        onSuccess: (response) => {
+            props.toastMessage('success', 'Info', 'Berhasil Menambahkan Pengajuan')
+            console.log(response)
+        },
+        onError: (error) => {
+            console.log(error)
+            props.toastMessage('error', 'Info', 'Gagal Menambahkan Pengajuan')
+        }
+    })
+     
     closeDialog();
 };
 </script>
-
 <template>
     <Dialog v-model:visible="visible" modal header="Buat Pengajuan" :style="{ width: '60rem' }" @hide="closeDialog" class="overflow-thin">
         <div class="flex items-center gap-3 mb-3 flex-col">
