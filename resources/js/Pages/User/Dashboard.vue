@@ -9,6 +9,8 @@ import AddRequestBtn from '@/Pages/User/Components/AddRequestBtn.vue';
 import ModalDialog from './Components/ModalDialog.vue';
 import { ref } from 'vue';
 import Toast from 'primevue/toast';
+import ModalDetailRequest from './Components/ModalDetailRequest.vue';
+
 
 
 import { useToast } from "primevue/usetoast";
@@ -17,46 +19,53 @@ const toast = useToast();
 const page = usePage();
 const userData = page.props.auth.user;
 const modalVisibility = ref(false);
+const modalVisibilityDetailRequest = ref(false);
 
-const handleAddRequest = () => {
-  modalVisibility.value = true;
+const handleBtn = (typeHandle) => {
+    typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
 };
+
 
 defineProps({
 
-   barangs: {
-      type: Array,
-      default: () => [],
-   },
-   departements: {
-      type: Array,
-      default: () => [],
-   },
-   transaksis: {
-     type: Array,
-     default: () => []
-   },
-   statuses: {
-    type: Array,
-    default: () => []
-   }
+    barangs: {
+        type: Array,
+        default: () => [],
+    },
+    departements: {
+        type: Array,
+        default: () => [],
+    },
+    transaksis: {
+        type: Array,
+        default: () => []
+    },
+    statuses: {
+        type: Array,
+        default: () => []
+    }
 });
 
 
-const loadToastMessage  = (toastSeverity,toastSummary, toastMessageDetail) => {
+const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
 };
 
 </script>
 
 <template>
-  <Navbar />
-  <div class="container mx-auto py-5 px-20">
-    <Chart :username="userData.username" />
-    <TableUser :pilihanStatus="statuses" :transaksidata="transaksis" />
-  </div>
-  <AddRequestBtn @click="handleAddRequest" />
-  <ModalDialog v-model:currentVisibility="modalVisibility" :barangdata="barangs" :departementData="departements" :toastMessage="loadToastMessage" />
-  <Toast position="bottom-right" group="br" />
+    <Navbar />
+    <div class="container mx-auto py-5 px-20">
+        <Chart :username="userData.username" />
+        <TableUser :pilihanStatus="statuses" :transaksidata="transaksis"
+            :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
+            @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event" />
+    </div>
+    <AddRequestBtn @click="handleBtn('REQ')" />
+    <ModalDialog v-model:currentVisibility="modalVisibility" :barangdata="barangs" :departementData="departements"
+        :toastMessage="loadToastMessage" />
+    <ModalDetailRequest :currentVisibility="modalVisibilityDetailRequest"
+        @update:currentVisibility="modalVisibilityDetailRequest = $event" />
+    <Toast position="bottom-right" group="br" />
 
 </template>

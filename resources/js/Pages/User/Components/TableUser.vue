@@ -5,13 +5,14 @@ import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import DatePicker from 'primevue/datepicker';
-import { ref } from 'vue';
-
+import { ref, watch } from 'vue';
+import { truncate } from '../Helpers/userHelpers';
+import { getStatusClass } from '../Helpers/userHelpers';
 
 let dates = ref();
 let selectedStatus = ref();
 let value = ref('');
-let statuses = ref([]);
+
 
 defineProps({
   transaksidata: {
@@ -21,8 +22,21 @@ defineProps({
   pilihanStatus: {
      type: Array,
      default: () => []
+  },
+  isCurrentDetailRequestModalOpen: {
+     type: Boolean,
+     required: true
   }
 });
+
+const emit = defineEmits(['update:isCurrentDetailRequestModalOpen']);
+
+const openModalDetailRequest = () => {
+    emit('update:isCurrentDetailRequestModalOpen', true);
+}
+
+
+
 </script>
 
 <template>
@@ -41,8 +55,6 @@ defineProps({
           </div>
         </div>
       </template>
-
-      <!-- Fixed index column using template -->
       <Column header="ID">
         <template #body="{ index }">
           {{ index + 1 }}
@@ -50,24 +62,25 @@ defineProps({
       </Column>
 
       <Column field="unique_id" header="Kode"></Column>
-      <Column field="keterangan" header="Keterangan"></Column>
+      <Column field="keterangan" header="Keterangan">
+        <template #body="{ data }">
+          <span :title="data.keterangan">
+            {{ truncate(data.keterangan, 20) }}
+          </span>
+        </template>
+      </Column>
       <Column field="created_at" header="Tanggal Diajukan"></Column>
       <Column field="quantity" header="Jumlah Barang"></Column>
       <Column field="nameexternal" header="Status">
         <template #body="{ data }">
-          <span :class="{
-            'bg-yellow-500 text-white': data.nameexternal === 'Request',
-            'bg-orange-500 text-white': data.nameexternal === 'Ditinjau',
-            'bg-green-500 text-white': data.nameexternal === 'Approved',
-            'bg-red-500 text-white': data.nameexternal === 'Ditolak'
-          }" class="px-3 py-1 rounded-full">
+          <span :class="getStatusClass(data.nameexternal)" class="px-3 py-1 rounded-full">
             {{ data.nameexternal }}
           </span>
         </template>
       </Column>
       <Column header="Rincian">
         <template #body>
-            <Button rounded icon="pi pi-arrow-right" iconPos="top" />
+            <Button @click="openModalDetailRequest" rounded icon="pi pi-arrow-right" iconPos="top" />
         </template>
      </Column>
     </DataTable>
