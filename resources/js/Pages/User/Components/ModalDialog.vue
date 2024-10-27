@@ -5,10 +5,11 @@ import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import EmptyBarang from '../../../../../public/ilustration/emptybarang.svg';
-import { useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 
 
 
@@ -45,11 +46,11 @@ const closeDialog = () => {
 const selectedBarang = ref(null);
 const selectedDepartement = ref(null);
 const keteranganPengajuan = ref('');
-const jumlahBarang = ref('');
+const jumlahBarang = ref(null);
 const keteranganBarang = ref('');
 const daftarBarang = ref([]);
 const editIndex = ref(null);
-
+const isSubmitting = ref(false);
 
 // Fungsi untuk menambah barang ke daftar
 const tambahBarang = () => {
@@ -61,7 +62,7 @@ const tambahBarang = () => {
                 jumlah: jumlahBarang.value,
                 keterangan: keteranganBarang.value
             };
-            editIndex.value = null; 
+            editIndex.value = null;
         } else {
             daftarBarang.value.unshift({
                 barang_id: selectedBarang.value.id,
@@ -73,7 +74,7 @@ const tambahBarang = () => {
 
 
         selectedBarang.value = null;
-        jumlahBarang.value = '';
+        jumlahBarang.value = null;
         keteranganBarang.value = '';
     }
 };
@@ -83,11 +84,11 @@ const editBarang = (index) => {
     selectedBarang.value = props.barangdata.find(b => b.namabarang === barang.namabarang);
     jumlahBarang.value = barang.jumlah;
     keteranganBarang.value = barang.keterangan;
-    editIndex.value = index; 
+    editIndex.value = index;
 };
 
 const deleteBarang = (index) => {
-    daftarBarang.value.splice(index, 1); 
+    daftarBarang.value.splice(index, 1);
 };
 
 const isTambahBarangDisabled = ref(true);
@@ -96,34 +97,62 @@ watch([keteranganPengajuan, selectedDepartement], ([newKeterangan, newDepartemen
     isTambahBarangDisabled.value = !newKeterangan || !newDepartement;
 });
 
-const simpanPengajuan = () => {
-    const URL = 'user/simpan-pengajuan-user';
+const simpanPengajuan = async () => {
+    if (isSubmitting.value) return; // Prevent double submission
 
-    const pengajuan = {
-        departement: selectedDepartement.value ?? null,
-        keteranganPengajuan: keteranganPengajuan.value ?? null,
-        barangDiajukan: daftarBarang ?? null
-    };
+    try {
+        isSubmitting.value = true;
 
-    
-    const form = useForm({
-        departement: pengajuan.departement.id,
-        keteranganPengajuan:  pengajuan.keteranganPengajuan,
-        barangDiajukan: pengajuan.barangDiajukan
-    });
-
-    form.post(URL,{
-        onSuccess: (response) => {
-            props.toastMessage('success', 'Info', 'Berhasil Menambahkan Pengajuan')
-            console.log(response)
-        },
-        onError: (error) => {
-            console.log(error)
-            props.toastMessage('error', 'Info', 'Gagal Menambahkan Pengajuan')
+        // Validasi data sebelum submit
+        if (!selectedDepartement.value?.id || !keteranganPengajuan.value || !daftarBarang.value.length) {
+            props.toastMessage('error', 'Info', 'Mohon lengkapi semua data yang diperlukan');
+            return;
         }
-    })
-     
-    closeDialog();
+
+        // Prepare data yang akan dikirim
+        const formData = {
+            departement: selectedDepartement.value.id,
+            keterangan: keteranganPengajuan.value,
+            barangDiajukan: daftarBarang.value.map(barang => ({
+                barang_id: barang.barang_id,
+                quantity: barang.jumlah,
+                keterangan: barang.keterangan,
+                status_id: 1
+            }))
+        };
+
+        // Gunakan router.post dari Inertia sebagai gantinya
+        await router.post('user/simpan-pengajuan-user', formData, {
+            preserveScroll: true,
+            onSuccess: () => {
+                props.toastMessage('success', 'Info', 'Berhasil Menambahkan Pengajuan');
+                resetAll();
+                closeDialog();
+            },
+            onError: (errors) => {
+                const errorMessage = Object.values(errors)[0] || 'Gagal Menambahkan Pengajuan';
+                props.toastMessage('error', 'Info', errorMessage);
+            },
+            onFinish: () => {
+                isSubmitting.value = false;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        props.toastMessage('error', 'Info', 'Terjadi kesalahan saat menyimpan data');
+        isSubmitting.value = false;
+    }
+};
+
+const resetAll = () => {
+    selectedDepartement.value = null;
+    keteranganPengajuan.value = '';
+    daftarBarang.value = [];
+    selectedBarang.value = null;
+    jumlahBarang.value = null;
+    keteranganBarang.value = '';
+    editIndex.value = null;
 };
 </script>
 <template>
@@ -152,7 +181,7 @@ const simpanPengajuan = () => {
         </div>
         <div class="flex items-start gap-3 mb-3 flex-col">
             <label for="username" class="font-semibold w-full">Tambah Barang</label>
-            <div class="flex justify-start gap-x-3 w-full">
+            <div class="flex justify-between w-full gap-x-2">
                 <Select v-model="selectedBarang" :options="barangdata" :filter="true" :filter-fields="['namabarang']" optionLabel="namabarang" placeholder="Pilih Barang" class="w-full md:w-[20rem]">
                     <template #value="slotProps">
                         <div v-if="slotProps.value" class="flex items-center">
@@ -168,11 +197,8 @@ const simpanPengajuan = () => {
                         </div>
                     </template>
                 </Select>
-                <IconField>
-                    <InputIcon class="pi pi-box" />
-                    <InputText class="w-40" v-model="jumlahBarang" placeholder="Jumlah Barang" />
-                </IconField>
-                <InputText class="w-80" v-model="keteranganBarang" placeholder="Keterangan Per Barang" />
+                <InputNumber :min="1" v-model="jumlahBarang" class="w-1/4" placeholder="Jumlah Barang" />
+                <InputText class="w-[35%]" v-model="keteranganBarang" placeholder="Keterangan Per Barang" />
                 <Button :icon="editIndex == null ? 'pi pi-plus' : 'pi pi-pencil'" :label="editIndex == null ? 'Tambah' : 'Update'" aria-label="Save" @click="tambahBarang" :disabled="isTambahBarangDisabled || !selectedBarang || !jumlahBarang || !keteranganBarang" />
             </div>
         </div>
@@ -192,18 +218,21 @@ const simpanPengajuan = () => {
                             </div>
                             <div class="tblnbtn flex justify-between items-start w-full">
                                 <table class="w-fit">
-                                    <tr>
-                                        <th class="text-left">Nama Barang</th>
-                                        <td class="text-left px-3">{{ barang.namabarang }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-left">Jumlah</th>
-                                        <td class="text-left px-3">{{ barang.jumlah }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-left">Keterangan</th>
-                                        <td class="text-left px-3">{{ barang.keterangan }}</td>
-                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-left">Nama Barang</th>
+                                            <td class="text-left px-3">{{ barang.namabarang }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-left">Jumlah</th>
+                                            <td class="text-left px-3">{{ barang.jumlah }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-left">Keterangan</th>
+                                            <td class="text-left px-3">{{ barang.keterangan }}</td>
+                                        </tr>
+                                    </tbody>
+
                                 </table>
                                 <div class="btn-action flex items-center gap-x-2">
                                     <div id="edit-barang" class="bg-yellow-100 hover:bg-yellow-200 hover:scale-105 duration-200  w-fit h-fit p-4 rounded-full grid place-items-center" @click="editBarang(index)">
@@ -219,10 +248,22 @@ const simpanPengajuan = () => {
                 </Card>
             </div>
         </div>
-
         <div class="flex justify-end gap-2 mt-4">
-            <Button type="button" label="Batal" severity="secondary" @click="closeDialog"></Button>
-            <Button icon="pi pi-save" type="button" label="Simpan" @click="simpanPengajuan"></Button>
+            <Button
+                type="button"
+                label="Batal"
+                severity="secondary"
+                @click="closeDialog"
+                :disabled="isSubmitting">
+            </Button>
+            <Button
+                icon="pi pi-save"
+                type="button"
+                label="Simpan"
+                @click="simpanPengajuan"
+                :loading="isSubmitting"
+                :disabled="isSubmitting || !selectedDepartement || !keteranganPengajuan || daftarBarang.length === 0">
+            </Button>
         </div>
     </Dialog>
 </template>

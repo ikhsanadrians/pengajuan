@@ -1,5 +1,8 @@
 <?php
 
+use Carbon\Carbon;
+
+
 if (!function_exists('generateUniqueId')) {
     function generateUniqueId($dept_id)
     {
@@ -9,5 +12,17 @@ if (!function_exists('generateUniqueId')) {
         $uniqueId = $datePart . $uniqueNumber . $dept_id;
 
         return $uniqueId;
+    }
+}
+
+
+
+if (!function_exists('formatTanggal')) {
+    function formatTanggalWithDayAndTime($date)
+    {
+        Carbon::setLocale(locale: 'id');
+
+        return Carbon::parse($date)->isoFormat('dddd, DD-MM-YY HH:mm');
+
     }
 }

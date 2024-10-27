@@ -9,10 +9,10 @@ use App\Repositories\PengajuanRepository;
 
 class PengajuanController extends Controller
 {
-    
+
 
     public function __construct(PengajuanRepository $pengajuanRepository, TransaksiRepository $transaksiRepository)
-    { 
+    {
          $this->pengajuanRepository = $pengajuanRepository;
          $this->transaksiRepository = $transaksiRepository;
     }
@@ -23,23 +23,23 @@ class PengajuanController extends Controller
         return view('pengajuan.index', compact('data'));
     }
 
-    
-    
+
+
     public function simpanPengajuanUser(Request $request){
-        
+
     $departemen_id = $request->input('departement');
     $keterangan = $request->input('keterangan');
-    
+
     $user_id = auth()->user()->id;
     $unique_id = generateUniqueId($departemen_id);
-    
+
     $status_id = 1;
     $created_at = now();
     $updated_at = now();
-    
+
     $barangGroups = $request->barangDiajukan;
-    @dd($request->all());
-    
+
+
     $totalQuantity = array_sum(array_column($barangGroups, 'quantity'));
 
     $pengajuanData = [

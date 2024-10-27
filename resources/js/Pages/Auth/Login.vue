@@ -7,11 +7,19 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useToast } from 'primevue/usetoast';
 
 defineProps({
     canResetPassword: Boolean,
     status: String,
 });
+
+const toast = useToast();
+
+const loadToastMessage  = (toastSeverity,toastSummary, toastMessageDetail) => {
+    toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
+};
+
 
 const form = useForm({
     username: '',
@@ -25,8 +33,18 @@ const submit = () => {
         remember: form.remember ? 'on' : '',
     })).post(route('loginPost'), {
         onFinish: () => form.reset('password'),
+        onSuccess: () => {
+            loadToastMessage('success', 'Info', 'Successfully Logged In!');
+            form.reset('password');
+        },
+        onError: (e) => {
+            loadToastMessage('error', 'Error', 'Invalid username or password.');
+            console.log(e)
+            form.reset('password');
+        }
     });
 };
+
 </script>
 
 <template>
@@ -53,7 +71,7 @@ const submit = () => {
                     autofocus
                     autocomplete="username"
                 />
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError class="mt-2" :message="form.errors.username" />
             </div>
 
             <div class="mt-4">
@@ -87,4 +105,5 @@ const submit = () => {
             </div>
         </form>
     </AuthenticationCard>
+    <Toast position="bottom-right" group="br" />
 </template>

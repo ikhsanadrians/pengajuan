@@ -39,7 +39,7 @@ class AuthController extends Controller
             // Regenerate session to prevent fixation attacks
             $request->session()->regenerate();
 
-            
+
             $user = Auth::user();
 
             if ($user) {
@@ -57,7 +57,7 @@ class AuthController extends Controller
 
         // If authentication fails, redirect back to the login page with an error
         return redirect()->route('login')->withErrors([
-            'username' => 'The provided credentials do not match our records.',
+            'username' => 'Username atau password anda salah!',
         ])->with('message', 'Login failed');
     }
 

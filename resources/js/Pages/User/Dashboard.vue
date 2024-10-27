@@ -4,7 +4,7 @@ import { usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Navbar from '@/Components/Navbar.vue';
 import Chart from '@/Components/Chart.vue';
-import TableApprovalRequest from '@/Components/TableApprovalRequest.vue';
+import TableUser from './Components/TableUser.vue';
 import AddRequestBtn from '@/Pages/User/Components/AddRequestBtn.vue';
 import ModalDialog from './Components/ModalDialog.vue';
 import { ref } from 'vue';
@@ -23,6 +23,7 @@ const handleAddRequest = () => {
 };
 
 defineProps({
+
    barangs: {
       type: Array,
       default: () => [],
@@ -30,6 +31,14 @@ defineProps({
    departements: {
       type: Array,
       default: () => [],
+   },
+   transaksis: {
+     type: Array,
+     default: () => []
+   },
+   statuses: {
+    type: Array,
+    default: () => []
    }
 });
 
@@ -44,7 +53,7 @@ const loadToastMessage  = (toastSeverity,toastSummary, toastMessageDetail) => {
   <Navbar />
   <div class="container mx-auto py-5 px-20">
     <Chart :username="userData.username" />
-    <TableApprovalRequest :transaksidata="transaksis" />
+    <TableUser :pilihanStatus="statuses" :transaksidata="transaksis" />
   </div>
   <AddRequestBtn @click="handleAddRequest" />
   <ModalDialog v-model:currentVisibility="modalVisibility" :barangdata="barangs" :departementData="departements" :toastMessage="loadToastMessage" />
