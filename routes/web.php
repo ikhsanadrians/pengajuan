@@ -32,4 +32,3 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::post('/simpan-pengajuan-user', [PengajuanController::class, 'simpanPengajuanUser'])->name('simpan-pengajuan-user');
         });
     });
-

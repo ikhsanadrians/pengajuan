@@ -2,10 +2,15 @@
 import { ref, watch, defineEmits } from 'vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     currentVisibility: {
         type: Boolean,
+        required: true,
+    },
+    currentTransactionId: {
+        type: String,
         required: true,
     }
 });
@@ -17,6 +22,17 @@ watch(() => props.currentVisibility, (newValue) => {
     visible.value = newValue;
 });
 
+
+const currentTransaction = ref([]);
+
+const fetchCurrentTransaction = async () => {
+    await router.post('', {
+
+    });
+}
+
+
+
 const closeDialog = () => {
     visible.value = false;
     emit('update:currentVisibility', false);
@@ -25,6 +41,7 @@ const closeDialog = () => {
 watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
 });
+
 </script>
 
 <template>

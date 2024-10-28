@@ -11,9 +11,6 @@ import Card from 'primevue/card';
 import EmptyBarang from '../../../../../public/ilustration/emptybarang.svg';
 import { router } from '@inertiajs/vue3';
 
-
-
-
 const props = defineProps({
     currentVisibility: {
         type: Boolean,

@@ -20,9 +20,9 @@ if (!function_exists('generateUniqueId')) {
 if (!function_exists('formatTanggal')) {
     function formatTanggalWithDayAndTime($date)
     {
-        Carbon::setLocale(locale: 'id');
-
-        return Carbon::parse($date)->isoFormat('dddd, DD-MM-YY HH:mm');
-
+            return Carbon::parse($date)
+                ->locale('id') 
+                ->isoFormat('dddd, DD-MM-YY HH:mm');
     }
+    
 }

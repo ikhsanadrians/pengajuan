@@ -23,7 +23,7 @@ const logout = () => {
 
 </script>
 <template>
-    <div class="bg-white h-16 shadow-sm border-b-[1.5px] border-gray-300 sticky top-0">
+    <div class="bg-white h-16 shadow-sm border-b-[1.5px] border-gray-300 sticky top-0 z-30">
         <div class="container mx-auto px-8 flex w-full items-center h-full">
             <div class="w-full flex justify-between items-center py-8">
                 <Link class="flex items-center font-bold" href="/">

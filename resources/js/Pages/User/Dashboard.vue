@@ -20,6 +20,7 @@ const page = usePage();
 const userData = page.props.auth.user;
 const modalVisibility = ref(false);
 const modalVisibilityDetailRequest = ref(false);
+const transaksiId = ref(null);
 
 const handleBtn = (typeHandle) => {
     typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
@@ -59,13 +60,14 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
         <Chart :username="userData.username" />
         <TableUser :pilihanStatus="statuses" :transaksidata="transaksis"
             :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
-            @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event" />
+            @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event"
+            />
     </div>
     <AddRequestBtn @click="handleBtn('REQ')" />
     <ModalDialog v-model:currentVisibility="modalVisibility" :barangdata="barangs" :departementData="departements"
         :toastMessage="loadToastMessage" />
-    <ModalDetailRequest :currentVisibility="modalVisibilityDetailRequest"
+    <ModalDetailRequest :currentTransactionId="transaksiId" :currentVisibility="modalVisibilityDetailRequest"
         @update:currentVisibility="modalVisibilityDetailRequest = $event" />
-    <Toast position="bottom-right" group="br" />
-
+    <Toast position="bottom-right" group="br" />    
+    <Link href="/test">Klik Saya</Link>
 </template>
