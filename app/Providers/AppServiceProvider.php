@@ -53,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
                     'role_id' => Auth::user()->role_id,
                 ] : null;
             },
+
         ]);
     }
 }

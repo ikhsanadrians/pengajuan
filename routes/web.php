@@ -30,5 +30,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/', [IndexController::class, 'userIndex'])->name('user');
         Route::prefix('/user')->group(function(){
             Route::post('/simpan-pengajuan-user', [PengajuanController::class, 'simpanPengajuanUser'])->name('simpan-pengajuan-user');
+            Route::post('/get-detail-pengajuan', [PengajuanController::class,'getDetailPengajuan'])->name('get-detail-pengajuan');
         });
     });

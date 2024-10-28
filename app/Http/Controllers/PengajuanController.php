@@ -65,7 +65,18 @@ class PengajuanController extends Controller
     }
 
     return redirect()->route('user');
-}
+   }
+
+   public function getDetailPengajuan(Request $request){
+        $currentPengajuanId = $request->pengajuanId;
+
+        $pengajuanDetail = $this->pengajuanRepository->getPengajuanDetailByCode($currentPengajuanId);
+        return response()->json([
+            "message" => "Success, Get Pengajuan Detail",
+            "data" => $pengajuanDetail
+        ],200);
+   }
+
 
 
 

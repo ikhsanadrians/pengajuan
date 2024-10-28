@@ -38,6 +38,37 @@ class PengajuanRepository
     {
         return DB::table('pengajuan_barang')->where('id', $id)->first();
     }
+    public function getPengajuanDetailByCode($uniqueCode){
+        $pengajuan = DB::table('pengajuanbarang as pb')
+            ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
+            ->leftJoin('departements as d', 'd.id', '=', 'pb.departemen_id')
+            ->where('pb.unique_id', '=', $uniqueCode)
+            ->select(
+        'pb.*',
+                 'sts.nameexternal as status_name',
+                 'd.namadepartemen as namadepartement'
+            )
+            ->first();
+
+        if ($pengajuan) {
+            $pengajuan->created_at = formatTanggalWithDayAndTime($pengajuan->created_at);
+
+            $transaksi = DB::table('transaksi as tr')
+                ->where('tr.pengajuan_id', '=', $pengajuan->id)
+                ->leftJoin('barangs as b', 'b.id', '=', 'tr.barang_id')
+                ->leftJoin('status as s', 's.id' , 'tr.status_id')
+                ->select(
+                    'tr.*',
+                    'b.namabarang',
+                    's.nameexternal as status'
+                )
+                ->get();
+
+            $pengajuan->transaksi = $transaksi;
+        }
+
+        return $pengajuan;
+    }
 
     public function approvePengajuanBarang($id, $approveType, array $data)
     {
