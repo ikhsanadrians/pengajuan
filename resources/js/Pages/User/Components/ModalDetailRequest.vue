@@ -35,7 +35,6 @@ const fetchCurrentTransaction = async () => {
             pengajuanId: props.currentTransactionId
         });
         currentTransaction.value = response.data.data;
-        console.log(response.data.data)
     } catch (error) {
         console.error('Error fetching transaction:', error);
     }
@@ -68,7 +67,7 @@ watch(visible, (newValue) => {
                         <td class="pl-8">
                             <div class="column">
                                 <label class="font-semibold" for="">Departemen Tujuan</label>
-                                <p>{{ currentTransaction.departemen_id }}</p>
+                                <p>{{ currentTransaction.namadepartement }}</p>
                             </div>
                         </td>
                         <td class="pl-8">

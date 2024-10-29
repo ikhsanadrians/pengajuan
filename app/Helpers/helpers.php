@@ -15,8 +15,6 @@ if (!function_exists('generateUniqueId')) {
     }
 }
 
-
-
 if (!function_exists('formatTanggal')) {
     function formatTanggalWithDayAndTime($date)
     {
