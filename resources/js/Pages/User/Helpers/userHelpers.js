@@ -11,3 +11,4 @@ export const getStatusClass = (status) => {
         'bg-red-500 text-white': status === 'Ditolak'
     };
 };
+

@@ -79,10 +79,24 @@ class PengajuanRepository
     {
         return DB::table('pengajuanbarang')->insertGetId($data);
     }
-
-    public function deletePengajuanBarang($id)
+    public function deletePengajuanBarang($id): bool
     {
-        return DB::table('pengajuan_barang')->where('id', $id)->delete();
+        $pengajuan = DB::table('pengajuanbarang')->where('unique_id', $id)->first();
+
+        if ($pengajuan) {
+            DB::beginTransaction();
+            try {
+                DB::table('transaksi')->where('pengajuan_id', $pengajuan->id)->delete();
+                DB::table('pengajuanbarang')->where('unique_id', $id)->delete();
+                DB::commit();
+                return true;
+            } catch (\Exception $e) {
+                DB::rollback();
+                return false;
+            }
+        }
+
+        return false;
     }
 }
 

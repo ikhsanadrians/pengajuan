@@ -77,6 +77,17 @@ class PengajuanController extends Controller
         ],200);
    }
 
+   public function deletePengajuan(Request $request) {
+        $pengajuanId = $request->pengajuanId;
+
+        $this->pengajuanRepository->deletePengajuanBarang($pengajuanId);
+
+        return response()->json([
+            "message" => "Success, Pengajuan Deleted",
+            "data" => null
+        ], 200);
+   }
+
 
 
 

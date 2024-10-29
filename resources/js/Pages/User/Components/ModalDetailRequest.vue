@@ -14,11 +14,18 @@ const props = defineProps({
     currentTransactionId: {
         type: String,
         required: true,
-    }
+    },
+    currentVisibilityConfirmationDelete: {
+        type: Boolean,
+        required: true,
+    },
+
 });
 
-const emit = defineEmits(['update:currentVisibility']);
+const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityConfirmationDelete']);
 const visible = ref(props.currentVisibility);
+const loading = ref(false);
+
 
 watch(() => props.currentVisibility, (newValue) => {
     visible.value = newValue;
@@ -30,6 +37,7 @@ watch(() => props.currentVisibility, (newValue) => {
 const currentTransaction = ref({});
 
 const fetchCurrentTransaction = async () => {
+    loading.value = true;
     try {
         const response = await axios.post('user/get-detail-pengajuan', {
             pengajuanId: props.currentTransactionId
@@ -37,6 +45,8 @@ const fetchCurrentTransaction = async () => {
         currentTransaction.value = response.data.data;
     } catch (error) {
         console.error('Error fetching transaction:', error);
+    } finally {
+        loading.value = false;
     }
 }
 
@@ -44,6 +54,11 @@ const closeDialog = () => {
     visible.value = false;
     emit('update:currentVisibility', false);
 };
+
+const triggerDeleteConfirmation = () => {
+    emit('update:currentVisibilityConfirmationDelete', true);
+};
+
 
 watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
@@ -54,7 +69,10 @@ watch(visible, (newValue) => {
 <template>
     <Dialog v-model:visible="visible" modal header="Detail Pengajuan" :style="{ width: '60rem', MaxHeight: '85%' }"
         @hide="closeDialog">
-        <div v-if="currentTransaction" class="dialog-wrappers">
+        <div v-if="loading" class="flex justify-center items-center h-40">
+            <i class="pi pi-spin pi-spinner text-4xl"></i>
+        </div>
+        <div v-else-if="currentTransaction" class="dialog-wrappers">
             <table>
                 <tbody>
                     <tr>
@@ -150,7 +168,7 @@ watch(visible, (newValue) => {
 
         </div>
         <div class="tools mt-4 flex gap-3">
-            <Button icon="pi pi-times" label="Batalkan Pengajuan" severity="danger" outlined rounded />
+            <Button icon="pi pi-times"  @click="triggerDeleteConfirmation" label="Batalkan Pengajuan" severity="danger" outlined rounded />
             <Button icon="pi pi-print" label="Cetak" severity="success" rounded />
         </div>
     </Dialog>
