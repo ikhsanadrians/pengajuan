@@ -21,6 +21,20 @@ const toast = useToast();
 
 const page = usePage();
 const userData = page.props.auth.user;
+const transaksis = ref(page.props.transaksis);
+
+
+const handleFilterChange = async (filters) => {
+    try {
+        const response = await axios.post('/user/filter-pengajuan', { params: filters });
+        transaksis.value = response.data.transaksis; 
+        console.log(response); 
+    } catch (error) {
+        loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
+    }
+};
+
+
 const modalVisibility = ref(false);
 const modalVisibilityDetailRequest = ref(false);
 const currentPengajuanId = ref(null);
@@ -57,7 +71,6 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
 };
 
 
-// Watcher for `modalVisibilityConfirmationDelete` to trigger the confirmation dialog
 watch(modalVisibilityConfirmationDelete, (newValue) => {
     if (newValue) {
 
@@ -69,13 +82,14 @@ watch(modalVisibilityConfirmationDelete, (newValue) => {
 
 const deletePengajuan = async () => {
     try {
-        await axios.delete('/user/delete-pengajuan', { data: { pengajuanId: currentPengajuanId.value } });
-        toast.add({ severity: 'info', summary: 'Deleted', detail: 'Request has been deleted', life: 3000 });
+        const response = await axios.delete('/user/delete-pengajuan', { data: { pengajuanId: currentPengajuanId.value } });
+        if(response){
         modalVisibilityDetailRequest.value = false;
-        // Reload the page data after deletion
-        await router.reload();
+            loadToastMessage('success', 'Info', 'Berhasil Menghapus Pengajuan');
+            await router.reload();
+        }
     } catch (error) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete request', life: 3000 });
+        loadToastMessage('error', 'Info', 'Gagal Menghapus Pengajuan');
     }
 };
 
@@ -101,7 +115,9 @@ const showConfirmationDialog = () => {
     <Navbar />
     <div class="container mx-auto py-5 px-20">
         <Chart :username="userData.username" />
-        <TableUser :pilihanStatus="statuses" :transaksidata="transaksis"
+        <TableUser :pilihanStatus="statuses" 
+            :transaksidata="transaksis" 
+            @update:filter="handleFilterChange" 
             :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
             @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event"
             :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event" />

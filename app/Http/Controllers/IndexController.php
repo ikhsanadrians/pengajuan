@@ -36,6 +36,28 @@ class IndexController extends Controller
 
         return Inertia::render('User/Dashboard', ["transaksis" => $transaksis, 'barangs' => $barangs, 'departements' => $departements, 'statuses' => $statutes]);
     }
+
+
+    public function filterPengajuanUser(Request $request){
+
+    $params = $request->input('params', []);
+    
+    $startDate = $params['start_date'] ?? null;
+    $endDate = $params['end_date'] ?? null;
+    $status = $params['status'] ?? null;
+    $searchQuery = $params['search_query'] ?? null;
+
+    $filteredTransaksis = $this->pengajuanRepository->getFilteredPengajuanBarangs($startDate, $endDate, $status, $searchQuery);
+
+
+    return response()->json([
+        'transaksis' => $filteredTransaksis
+    ]);
+}
+
+
+
+    
     public function ownerIndex(){
         return Inertia::render('Owner/Dashboard');
     }

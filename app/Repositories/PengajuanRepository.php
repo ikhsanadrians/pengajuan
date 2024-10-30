@@ -98,6 +98,40 @@ class PengajuanRepository
 
         return false;
     }
+
+    public function getFilteredPengajuanBarangs($startDate = null, $endDate = null, $status = null, $searchQuery = null)
+    {
+        $loginedUser = Auth::user()->id ?? null;
+
+        $query = DB::table('pengajuanbarang as pb')
+            ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
+            ->where('pb.user_id', $loginedUser)
+            ->where('pb.statusenabled', '=', '1');
+
+        // Filter by date range
+        if ($startDate && $endDate) {
+            $query->whereBetween('pb.created_at', [$startDate, $endDate]);
+        }
+
+        // Filter by status
+        if ($status) {
+            $query->where('sts.nameexternal', '=', $status);
+        }
+
+        // Filter by search query in unique_id
+        if ($searchQuery) {
+            $query->where('pb.unique_id', 'like', '%' . $searchQuery . '%');
+        }
+
+        $pengajuanBarang = $query->orderBy('pb.created_at', 'desc')->get();
+
+        $pengajuanBarang->transform(function ($item) {
+            $item->created_at = formatTanggalWithDayAndTime($item->created_at);
+            return $item;
+        });
+
+        return $pengajuanBarang;
+    }
 }
 
 ?>

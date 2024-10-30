@@ -9,10 +9,10 @@ import { ref, watch, toRef } from 'vue';
 import { truncate } from '../Helpers/userHelpers';
 import { getStatusClass } from '../Helpers/userHelpers';
 
-let dates = ref();
-let selectedStatus = ref();
-let value = ref('');
-let currentPengajuanSelected = ref(null);
+const dates = ref();
+const selectedStatus = ref();
+const searchQuery = ref('');
+const currentPengajuanSelected = ref(null);
 
 const props = defineProps({
     transaksidata: {
@@ -32,7 +32,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['update:isCurrentDetailRequestModalOpen', 'update:currentPengajuanId']);
+const emit = defineEmits(['update:isCurrentDetailRequestModalOpen', 'update:currentPengajuanId', 'update:filter']);
 
 const openModalDetailRequest = (unique_id) => {
     emit('update:isCurrentDetailRequestModalOpen', true);
@@ -45,6 +45,18 @@ watch(() => props.isCurrentDetailRequestModalOpen, (newValue) => {
         currentPengajuanSelected.value = null;
     }
 });
+
+const applyFilters = () => {
+    emit('update:filter', {
+        start_date: dates.value ? dates.value[0] : null,
+        end_date: dates.value ? dates.value[1] : null,
+        status: selectedStatus.value,
+        search_query: searchQuery.value,
+    });
+};
+
+
+
 
 </script>
 <template>
@@ -60,9 +72,9 @@ watch(() => props.isCurrentDetailRequestModalOpen, (newValue) => {
                         <Select v-model="selectedStatus" showClear :options="pilihanStatus" optionLabel="nameexternal"
                             placeholder="Pilih Status" class="w-full md:w-56" />
                         <div class="card flex justify-center">
-                            <InputText type="text" v-model="value" placeholder="Cari Kode" />
+                            <InputText type="text" v-model="searchQuery" placeholder="Cari Kode" />
                         </div>
-                        <Button icon="pi pi-search" iconPos="top" />
+                        <Button icon="pi pi-search" iconPos="top"  @click="applyFilters" />
                     </div>
                 </div>
             </template>
