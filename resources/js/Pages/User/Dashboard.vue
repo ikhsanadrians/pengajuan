@@ -13,40 +13,19 @@ import ModalDetailRequest from './Components/ModalDetailRequest.vue';
 import { useConfirm } from "primevue/useconfirm";
 import ConfirmDialog from 'primevue/confirmdialog';
 import axios from 'axios';
+import { useToast } from 'primevue/usetoast';
+
 const confirm = useConfirm();
-
-
-import { useToast } from "primevue/usetoast";
 const toast = useToast();
-
 const page = usePage();
 const userData = page.props.auth.user;
-const transaksis = ref(page.props.transaksis);
 
+// State management for transactions
+const currentTransactions = ref([]);
+const isFiltered = ref(false);
 
-const handleFilterChange = async (filters) => {
-    try {
-        const response = await axios.post('/user/filter-pengajuan', { params: filters });
-        transaksis.value = response.data.transaksis; 
-        console.log(response); 
-    } catch (error) {
-        loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
-    }
-};
-
-
-const modalVisibility = ref(false);
-const modalVisibilityDetailRequest = ref(false);
-const currentPengajuanId = ref(null);
-const modalVisibilityConfirmationDelete = ref(false);
-
-const handleBtn = (typeHandle) => {
-    typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
-};
-
-
-defineProps({
-
+// Initialize transactions from props
+const props = defineProps({
     barangs: {
         type: Array,
         default: () => [],
@@ -65,17 +44,48 @@ defineProps({
     }
 });
 
+// Watch for props changes and update currentTransactions when not filtered
+watch(() => props.transaksis, (newValue) => {
+    if (!isFiltered.value) {
+        currentTransactions.value = newValue;
+    }
+}, { immediate: true });
+
+const handleFilterChange = async (filters) => {
+    try {
+        isFiltered.value = true;
+        const response = await axios.post('/user/filter-pengajuan', { params: filters });
+        currentTransactions.value = response.data.transaksis;
+    } catch (error) {
+        loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
+        // Revert to original data on error
+        currentTransactions.value = props.transaksis;
+        isFiltered.value = false;
+    }
+};
+
+
+// const resetFilter = () => {
+//     isFiltered.value = false;
+//     currentTransactions.value = props.transaksis;
+// };
+
+const modalVisibility = ref(false);
+const modalVisibilityDetailRequest = ref(false);
+const currentPengajuanId = ref(null);
+const modalVisibilityConfirmationDelete = ref(false);
+
+const handleBtn = (typeHandle) => {
+    typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
+};
 
 const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
 };
 
-
 watch(modalVisibilityConfirmationDelete, (newValue) => {
     if (newValue) {
-
         showConfirmationDialog();
-
         modalVisibilityConfirmationDelete.value = false;
     }
 });
@@ -83,8 +93,8 @@ watch(modalVisibilityConfirmationDelete, (newValue) => {
 const deletePengajuan = async () => {
     try {
         const response = await axios.delete('/user/delete-pengajuan', { data: { pengajuanId: currentPengajuanId.value } });
-        if(response){
-        modalVisibilityDetailRequest.value = false;
+        if (response) {
+            modalVisibilityDetailRequest.value = false;
             loadToastMessage('success', 'Info', 'Berhasil Menghapus Pengajuan');
             await router.reload();
         }
@@ -106,18 +116,13 @@ const showConfirmationDialog = () => {
         }
     });
 };
-
-
-
 </script>
 
 <template>
     <Navbar />
     <div class="container mx-auto py-5 px-20">
         <Chart :username="userData.username" />
-        <TableUser :pilihanStatus="statuses" 
-            :transaksidata="transaksis" 
-            @update:filter="handleFilterChange" 
+        <TableUser :pilihanStatus="statuses" :transaksidata="currentTransactions" @update:filter="handleFilterChange"
             :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
             @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event"
             :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event" />
@@ -131,5 +136,4 @@ const showConfirmationDialog = () => {
         @update:currentVisibilityConfirmationDelete="modalVisibilityConfirmationDelete = $event" />
     <Toast position="bottom-right" group="br" />
     <ConfirmDialog position="top" />
-
 </template>
