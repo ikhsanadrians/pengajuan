@@ -8,6 +8,7 @@ import DatePicker from 'primevue/datepicker';
 import { ref, watch, toRef } from 'vue';
 import { truncate } from '../Helpers/userHelpers';
 import { getStatusClass } from '../Helpers/userHelpers';
+import { format } from 'date-fns';  
 
 const dates = ref();
 const selectedStatus = ref();
@@ -46,14 +47,21 @@ watch(() => props.isCurrentDetailRequestModalOpen, (newValue) => {
     }
 });
 
+
+const formatDate = (date) => {
+    if (!date) return null;
+    return format(new Date(date), 'yyyy-MM-dd');
+}
+
 const applyFilters = () => {
     emit('update:filter', {
-        start_date: dates.value ? dates.value[0] : null,
-        end_date: dates.value ? dates.value[1] : null,
+        start_date: dates.value?.[0] ? formatDate(dates.value[0]) : null,
+        end_date: dates.value?.[1] ? formatDate(dates.value[1]) : null,
         status: selectedStatus.value,
         search_query: searchQuery.value,
     });
 };
+
 
 
 
@@ -67,9 +75,9 @@ const applyFilters = () => {
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <span class="text-lg font-bold">Pengajuan</span>
                     <div class="inputs flex items-center gap-x-3">
-                        <DatePicker v-model="dates" selectionMode="range" :manualInput="false"
-                            placeholder="Pilih Rentang Tanggal" />
-                        <Select v-model="selectedStatus" showClear :options="pilihanStatus" optionLabel="nameexternal"
+                        <DatePicker v-model="dates" showClear selectionMode="range" :manualInput="true"
+                            placeholder="Pilih Rentang Tanggal" showIcon fluid iconDisplay="input" />
+                        <Select v-model="selectedStatus" :options="pilihanStatus" optionLabel="nameexternal"
                             placeholder="Pilih Status" class="w-full md:w-56" />
                         <div class="card flex justify-center">
                             <InputText type="text" v-model="searchQuery" placeholder="Cari Kode" />
