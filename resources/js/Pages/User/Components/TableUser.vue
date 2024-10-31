@@ -79,7 +79,7 @@ const applyFilters = async () => {
                     <div class="inputs flex items-center gap-x-3">
                         <DatePicker v-model="dates" showClear selectionMode="range" :manualInput="true"
                             placeholder="Pilih Rentang Tanggal" showIcon fluid iconDisplay="input" />
-                        <Select v-model="selectedStatus" :options="pilihanStatus" optionLabel="nameexternal"
+                        <Select v-model="selectedStatus" showClear :options="pilihanStatus" optionLabel="nameexternal"
                             placeholder="Pilih Status" class="w-full md:w-56" />
                         <div class="card flex justify-center">
                             <InputText type="text" v-model="searchQuery" placeholder="Cari Kode" />
