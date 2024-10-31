@@ -19,7 +19,7 @@ class PengajuanRepository
         $loginedUser = Auth::user()->id ?? null;
 
         $pengajuanBarang = DB::table('pengajuanbarang as pb')
-           ->select('pb.*', 'sts.nameexternal') 
+           ->select('pb.*', 'sts.nameexternal')
            ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
            ->where('pb.user_id', $loginedUser)
            ->where('pb.statusenabled', '=', '1')
@@ -31,17 +31,17 @@ class PengajuanRepository
                   if ($item->created_at) {
                          $item->created_at = formatTanggalWithDayAndTime($item->created_at);
                      } else {
-    
+
                          $item->created_at = 'Tanggal tidak tersedia';
                      }
                  } catch (\Exception $e) {
-            
+
                      \Log::error("Error formatting date: " . $e->getMessage());
                      $item->created_at = 'Format tanggal gagal';
                  }
                  return $item;
              });
-        
+
         return $pengajuanBarang;
     }
 
@@ -60,9 +60,9 @@ class PengajuanRepository
                  'd.namadepartemen as namadepartement'
             )
             ->first();
-            
+
             $pengajuan->created_at = formatTanggalWithDayAndTime($pengajuan->created_at);
-        
+
             if ($pengajuan) {
 
             $transaksi = DB::table('transaksi as tr')
@@ -114,17 +114,17 @@ class PengajuanRepository
     public function getFilteredPengajuanBarangs($startDate = null, $endDate = null, $status = null, $searchQuery = null)
     {
         $loginedUser = Auth::user()->id ?? null;
-    
+
         $query = DB::table('pengajuanbarang as pb')
             ->select('pb.*', 'sts.nameexternal') // Spesifik kolom untuk menghindari konflik
             ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
             ->where('pb.user_id', $loginedUser)
             ->where('pb.statusenabled', '=', '1');
-           
+
             if ($startDate && $endDate) {
                 // Set waktu start ke awal hari (00:00:00) dan end ke akhir hari (23:59:59)
                 $query->whereBetween('pb.created_at', [
-                    $startDate . ' 00:00:00', 
+                    $startDate . ' 00:00:00',
                     $endDate . ' 23:59:59'
                 ]);
             } elseif ($startDate) {
@@ -142,15 +142,15 @@ class PengajuanRepository
             }
 
         if ($status) {
-            $query->where('sts.nameexternal', '=', $status);
+            $query->where('sts.id', '=', $status);
         }
-    
+
         if ($searchQuery) {
             $query->where('pb.unique_id', 'like', '%' . $searchQuery . '%');
         }
-    
+
         $pengajuanBarang = $query->orderBy('pb.created_at', 'desc')->get();
-    
+
         // Transform tanggal hanya jika nilai tidak null
         $pengajuanBarang->transform(function ($item) {
             if ($item->created_at) {
@@ -160,10 +160,10 @@ class PengajuanRepository
             }
             return $item;
         });
-    
+
         return $pengajuanBarang;
     }
-    
+
 }
 
 ?>

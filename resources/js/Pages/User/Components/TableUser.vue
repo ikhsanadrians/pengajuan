@@ -80,7 +80,7 @@ const applyFilters = async () => {
                         <DatePicker v-model="dates" showClear selectionMode="range" :manualInput="true"
                             placeholder="Pilih Rentang Tanggal" showIcon fluid iconDisplay="input" />
                         <Select v-model="selectedStatus" showClear :options="pilihanStatus" optionLabel="nameexternal"
-                            placeholder="Pilih Status" class="w-full md:w-56" />
+                            placeholder="Pilih Status" class="w-full md:w-56" optionValue="id" />
                         <div class="card flex justify-center">
                             <InputText type="text" v-model="searchQuery" placeholder="Cari Kode" />
                         </div>
