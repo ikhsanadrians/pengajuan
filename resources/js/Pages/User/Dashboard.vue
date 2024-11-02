@@ -15,16 +15,16 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 
+
+
 const confirm = useConfirm();
 const toast = useToast();
 const page = usePage();
 const userData = page.props.auth.user;
 
-// State management for transactions
 const currentTransactions = ref([]);
 const isFiltered = ref(false);
 
-// Initialize transactions from props
 const props = defineProps({
     barangs: {
         type: Array,
@@ -44,7 +44,6 @@ const props = defineProps({
     }
 });
 
-// Watch for props changes and update currentTransactions when not filtered
 watch(() => props.transaksis, (newValue) => {
     if (!isFiltered.value) {
         currentTransactions.value = newValue;
@@ -52,23 +51,25 @@ watch(() => props.transaksis, (newValue) => {
 }, { immediate: true });
 
 const handleFilterChange = async (filters) => {
+    const areAllFiltersEmpty = Object.values(filters).every(value => !value);
+
+    if (areAllFiltersEmpty) {
+        isFiltered.value = false;
+        currentTransactions.value = props.transaksis;
+        return;
+    }
+
     try {
         isFiltered.value = true;
         const response = await axios.post('/user/filter-pengajuan', { params: filters });
         currentTransactions.value = response.data.transaksis;
     } catch (error) {
         loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
-        // Revert to original data on error
         currentTransactions.value = props.transaksis;
         isFiltered.value = false;
     }
 };
 
-
-// const resetFilter = () => {
-//     isFiltered.value = false;
-//     currentTransactions.value = props.transaksis;
-// };
 
 const modalVisibility = ref(false);
 const modalVisibilityDetailRequest = ref(false);

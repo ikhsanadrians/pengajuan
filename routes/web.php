@@ -4,6 +4,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PengajuanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CetakanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +36,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::delete('/delete-pengajuan',[PengajuanController::class,'deletePengajuan'])->name('delete-pengajuan-user');
         });
     });
+
+
+Route::get('tools/cetakan-detail-pengajuan-user/{code}', [CetakanController::class, 'cetakanDetailPengajuanUser'])->name('cetakan-detail-pengajuan-user');

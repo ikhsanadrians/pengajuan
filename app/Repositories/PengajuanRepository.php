@@ -49,6 +49,8 @@ class PengajuanRepository
     {
         return DB::table('pengajuan_barang')->where('id', $id)->first();
     }
+
+
     public function getPengajuanDetailByCode($uniqueCode){
         $pengajuan = DB::table('pengajuanbarang as pb')
             ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')

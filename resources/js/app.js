@@ -10,6 +10,7 @@ import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css'
+import Tooltip from 'primevue/tooltip';
 
 
 
@@ -29,6 +30,7 @@ createInertiaApp({
             })
             .use(ToastService)
             .use(ConfirmationService)
+            .use(Tooltip)
             .mount(el);
     },
     progress: {

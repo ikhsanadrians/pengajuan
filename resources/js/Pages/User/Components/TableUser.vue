@@ -60,8 +60,8 @@ const applyFilters = async () => {
         await emit('update:filter', {
             start_date: dates.value?.[0] ? formatDate(dates.value[0]) : null,
             end_date: dates.value?.[1] ? formatDate(dates.value[1]) : null,
-            status: selectedStatus.value,
-            search_query: searchQuery.value,
+            status: selectedStatus.value || null,
+            search_query: searchQuery.value || null,
         });
     } finally {
         isLoading.value = false;

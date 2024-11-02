@@ -59,6 +59,10 @@ const triggerDeleteConfirmation = () => {
     emit('update:currentVisibilityConfirmationDelete', true);
 };
 
+const cetakDetailPengajuan = (code) => {
+    window.open(route('cetakan-detail-pengajuan-user', code), '_blank');
+}
+
 
 watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
@@ -136,29 +140,39 @@ watch(visible, (newValue) => {
                         <Card v-for="(transaksi, index) in currentTransaction.transaksi" :key="index"
                             class="border-[1.3px]">
                             <template #content>
-                                <div class="twrappers flex items-start justify-start gap-x-3">
-                                    <div
-                                        class="icons-bg bg-emerald-100 w-fit h-fit p-4 grid place-items-center rounded-full">
-                                        <i class="pi pi-box text-emerald-600" style="font-size: 20px"></i>
+                                <div class="twrappers flex items-start justify-between gap-x-3">
+                                    <div class="twrapper-left flex gap-x-3">
+                                        <div
+                                            class="icons-bg bg-emerald-100 w-fit h-fit p-4 grid place-items-center rounded-full">
+                                            <i class="pi pi-box text-emerald-600" style="font-size: 20px"></i>
+                                        </div>
+                                        <div class="tblnbtn flex justify-between items-start w-full">
+                                            <table class="w-fit">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="text-left">Nama Barang</th>
+                                                        <td class="text-left px-3">{{ transaksi.namabarang }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Jumlah</th>
+                                                        <td class="text-left px-3">{{ transaksi.quantity }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Keterangan</th>
+                                                        <td class="text-left px-3">{{ transaksi.keterangan }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                    <div class="tblnbtn flex justify-between items-start w-full">
-                                        <table class="w-fit">
-                                            <tbody>
-                                                <tr>
-                                                    <th class="text-left">Nama Barang</th>
-                                                    <td class="text-left px-3">{{ transaksi.namabarang }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="text-left">Jumlah</th>
-                                                    <td class="text-left px-3">{{ transaksi.quantity }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="text-left">Keterangan</th>
-                                                    <td class="text-left px-3">{{ transaksi.keterangan }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="twrapper-right">
+                                        <div :class="getStatusClass(transaksi.status)"
+                                            class="rounded-full px-3 py-[.8px]">
+                                            {{ transaksi.status }}
+                                        </div>
+
                                     </div>
+
                                 </div>
                             </template>
                         </Card>
@@ -168,8 +182,10 @@ watch(visible, (newValue) => {
 
         </div>
         <div class="tools mt-4 flex gap-3">
-            <Button icon="pi pi-times"  @click="triggerDeleteConfirmation" label="Batalkan Pengajuan" severity="danger" outlined rounded />
-            <Button icon="pi pi-print" label="Cetak" severity="success" rounded />
+            <Button icon="pi pi-times" @click="triggerDeleteConfirmation" label="Batalkan Pengajuan" severity="danger"
+                outlined rounded />
+            <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
+                severity="success" rounded />
         </div>
     </Dialog>
 </template>
