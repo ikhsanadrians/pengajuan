@@ -71,6 +71,7 @@ class PengajuanController extends Controller
         $currentPengajuanId = $request->pengajuanId;
 
         $pengajuanDetail = $this->pengajuanRepository->getPengajuanDetailByCode($currentPengajuanId);
+
         return response()->json([
             "message" => "Success, Get Pengajuan Detail",
             "data" => $pengajuanDetail

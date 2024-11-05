@@ -41,6 +41,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::prefix('admin')->group(function(){
             Route::get('/',    [AdminController::class, 'adminIndex'])->name('admin');
             Route::post('/filter-pengajuan',[AdminController::class, 'filterPengajuanUser'])->name('filter-pengajuan-admin');
+            Route::post('/get-detail-pengajuan-admin', [PengajuanController::class,'getDetailPengajuan'])->name('get-detail-pengajuan-admin');
+
 
             Route::prefix('users')->group(function(){
                 Route::get('/',   [AdminController::class, 'adminUsersIndex'])->name('admin.userIndex');

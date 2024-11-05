@@ -9,7 +9,7 @@ import TableAdmin from './Components/TableAdmin.vue';
 // import ModalDialog from './Components/ModalDialog.vue';
 import { ref, watch } from 'vue';
 import Toast from 'primevue/toast';
-// import ModalDetailRequest from './Components/ModalDetailRequest.vue';
+import ModalDetailRequest from './Components/ModalDetailRequest.vue';
 import { useConfirm } from "primevue/useconfirm";
 // import ConfirmDialog from 'primevue/confirmdialog';
 import axios from 'axios';
@@ -72,13 +72,13 @@ const handleFilterChange = async (filters) => {
 
 
 // const modalVisibility = ref(false);
-// const modalVisibilityDetailRequest = ref(false);
-// const currentPengajuanId = ref(null);
+const modalVisibilityDetailRequest = ref(false);
+const currentPengajuanId = ref(null);
 // const modalVisibilityConfirmationDelete = ref(false);
 
-// const handleBtn = (typeHandle) => {
-//     typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
-// };
+const handleBtn = (typeHandle) => {
+    typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
+};
 
 const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
@@ -131,10 +131,11 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     <!-- <AddRequestBtn @click="handleBtn('REQ')" />
     <ModalDialog v-model:currentVisibility="modalVisibility" :barangdata="barangs" :departementData="departements"
         :toastMessage="loadToastMessage" />
+
+    <ConfirmDialog position="top" /> -->
     <ModalDetailRequest :currentTransactionId="currentPengajuanId" :currentVisibility="modalVisibilityDetailRequest"
         @update:currentVisibility="modalVisibilityDetailRequest = $event"
         :currentVisibilityConfirmationDelete="modalVisibilityConfirmationDelete"
         @update:currentVisibilityConfirmationDelete="modalVisibilityConfirmationDelete = $event" />
     <Toast position="bottom-right" group="br" />
-    <ConfirmDialog position="top" /> -->
 </template>
