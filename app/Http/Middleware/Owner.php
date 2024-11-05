@@ -22,7 +22,7 @@ class Owner
             return redirect()->route('login');
         }
 
-        if(Auth::user()->id !=  2){
+        if(Auth::user()->role_id !=  2){
             return redirect()->route('login');
         }
 

@@ -10,8 +10,10 @@ use Inertia\Inertia;
 use App\Repositories\PengajuanRepository;
 use Illuminate\Support\Facades\DB;
 
-class IndexController extends Controller
+
+class AdminController extends Controller
 {
+
     public function __construct(TransaksiRepository $transaksiRepository, BarangRepository $barangRepository, DepartemenRepository $departemenRepository, PengajuanRepository $pengajuanRepository)
     {
         $this->transaksiRepository = $transaksiRepository;
@@ -20,41 +22,33 @@ class IndexController extends Controller
         $this->pengajuanRepository = $pengajuanRepository;
     }
 
-
-
-
-    public function userIndex(){
-        $transaksis = $this->pengajuanRepository->getAllPengajuanBarangsUser();
+    public function adminIndex(){
+        $transaksis = $this->pengajuanRepository->getAllPengajuanBarangsAdmin();
         $barangs = $this->barangRepository->getAllBarangs();
         $departements = $this->departemenRepository->getAllDepartements();
         $statutes = DB::table('status')->get();
 
-        return Inertia::render('User/Dashboard', ["transaksis" => $transaksis, 'barangs' => $barangs, 'departements' => $departements, 'statuses' => $statutes]);
+
+        return Inertia::render('Admin/Dashboard', ["transaksis" => $transaksis, 'barangs' => $barangs, 'departements' => $departements, 'statuses' => $statutes]);
     }
 
 
-    public function filterPengajuanUser(Request $request){
+    public function filterPengajuanAdmin(Request $request){
 
-    $params = $request->input('params', []);
+        $params = $request->input('params', []);
 
-    $startDate = $params['start_date'] ?? null;
-    $endDate = $params['end_date'] ?? null;
-    $status = $params['status'] ?? null;
-    $searchQuery = $params['search_query'] ?? null;
+        $startDate = $params['start_date'] ?? null;
+        $endDate = $params['end_date'] ?? null;
+        $status = $params['status'] ?? null;
+        $searchQuery = $params['search_query'] ?? null;
 
-    $filteredTransaksis = $this->pengajuanRepository->getFilteredPengajuanBarangs($startDate, $endDate, $status, $searchQuery);
-
-
-    return response()->json([
-        'transaksis' => $filteredTransaksis
-    ]);
-}
+        $filteredTransaksis = $this->pengajuanRepository->getFilteredPengajuanBarangs($startDate, $endDate, $status, $searchQuery);
 
 
-
-
-    public function ownerIndex(){
-        return Inertia::render('Owner/Dashboard');
+        return response()->json([
+            'transaksis' => $filteredTransaksis
+        ]);
     }
+
 
 }

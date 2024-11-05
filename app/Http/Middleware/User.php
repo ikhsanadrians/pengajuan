@@ -20,7 +20,7 @@ class User
             return redirect()->route('login');
         }
 
-        if(Auth::user()->id !=  3){
+        if(Auth::user()->role_id !=  3){
             return redirect()->route('login');
         }
 

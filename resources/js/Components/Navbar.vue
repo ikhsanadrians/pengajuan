@@ -6,13 +6,18 @@ import Popover from 'primevue/popover';
 import { ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import Button from 'primevue/button';
-
+import MegaMenu from 'primevue/megamenu';
 
 
 const op = ref();
+const opNav = ref();
 
 const toggle = (event) => {
     op.value.toggle(event);
+}
+
+const toggleNav = (event) => {
+    opNav.value.toggle(event)
 }
 
 const page = usePage();
@@ -33,6 +38,15 @@ const logout = () => {
                     <p class="text-gray-600 font-light">Pengajuan Barang</p>
                 </div>
                 </Link>
+                <div v-if="userData.role_id == 1" class="admin-dropdown">
+                    <div @click="toggleNav"
+                        class="text-[13px] flex flex-col items-center cursor-pointer hover:bg-gray-100 py-2 px-4 rounded-md">
+                        <i class="pi pi-bars"></i>
+                        <p class="text-gray-600">
+                            Navigation
+                        </p>
+                    </div>
+                </div>
                 <div class="right-navbar gap-x-4 flex items-center">
                     <span class="relative">
                         <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
@@ -65,6 +79,26 @@ const logout = () => {
                     <Button icon="pi pi-sign-out" class="w-full" style="font-size: 13px;" label="Log Out"
                         @click="logout"></Button>
                 </div>
+            </div>
+        </div>
+    </Popover>
+    <Popover ref="opNav" class="w-[20rem] sticky top-2">
+        <div class="navigation flex flex-col gap-4">
+            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+                <i class="pi pi-angle-right"></i>
+                <p>Tambah User</p>
+            </div>
+            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+                <i class="pi pi-angle-right"></i>
+                <p>Tambah Barang</p>
+            </div>
+            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+                <i class="pi pi-angle-right"></i>
+                <p>Tambah Kategori</p>
+            </div>
+            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+                <i class="pi pi-angle-right"></i>
+                <p>Tambah Departement</p>
             </div>
         </div>
     </Popover>

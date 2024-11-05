@@ -23,7 +23,7 @@ class Admin
             return redirect()->route('login');
         }
 
-        if(Auth::user()->id !=  1){
+        if(Auth::user()->role_id !=  1){
             return redirect()->route('login');
         }
 

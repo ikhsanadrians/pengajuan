@@ -45,6 +45,38 @@ class PengajuanRepository
         return $pengajuanBarang;
     }
 
+    public function getAllPengajuanBarangsAdmin()
+    {
+
+        $pengajuanBarang = DB::table('pengajuanbarang as pb')
+           ->select('pb.*', 'sts.nameexternal', 'usr.username')
+           ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
+           ->leftJoin('users as usr', 'usr.id' , '=' , 'pb.user_id')
+           ->where('pb.statusenabled', '=', '1')
+           ->orderBy('pb.created_at', 'desc')
+           ->get();
+
+
+
+         $pengajuanBarang->transform(function ($item) {
+                 try {
+                  if ($item->created_at) {
+                         $item->created_at = formatTanggalWithDayAndTime($item->created_at);
+                     } else {
+
+                         $item->created_at = 'Tanggal tidak tersedia';
+                     }
+                 } catch (\Exception $e) {
+
+                     \Log::error("Error formatting date: " . $e->getMessage());
+                     $item->created_at = 'Format tanggal gagal';
+                 }
+                 return $item;
+             });
+
+        return $pengajuanBarang;
+    }
+
     public function getPengajuanBarangById($id)
     {
         return DB::table('pengajuan_barang')->where('id', $id)->first();
@@ -55,11 +87,13 @@ class PengajuanRepository
         $pengajuan = DB::table('pengajuanbarang as pb')
             ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
             ->leftJoin('departements as d', 'd.id', '=', 'pb.departemen_id')
+            ->leftJoin('users as usr', 'usr.id', '=' , 'pb.user_id' )
             ->where('pb.unique_id', '=', $uniqueCode)
             ->select(
         'pb.*',
                  'sts.nameexternal as status_name',
-                 'd.namadepartemen as namadepartement'
+                 'd.namadepartemen as namadepartement',
+                 'usr.username as user'
             )
             ->first();
 

@@ -4,6 +4,9 @@ import Card from 'primevue/card';
 defineProps({
     username: {
         type: String,
+    },
+    role: {
+        type: String,
     }
 });
 
@@ -12,7 +15,7 @@ defineProps({
 <template>
     <div>
         <div class="title font-bold text-lg">
-            <h1>Welcome Back {{ username }}</h1>
+            <h1>Welcome Back {{ username }} </h1>
         </div>
         <div class="grid grid-cols-3 gap-x-4">
             <Card class="mt-4 !bg-gradient-to-r from-yellow-500 to-yellow-400 !text-yellow-800">
