@@ -4,7 +4,11 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import axios from 'axios';
+import InputText from 'primevue/inputtext';
 import { getStatusClass } from '../Helpers/adminHelpers';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import DatePicker from 'primevue/datepicker';
 
 const props = defineProps({
     currentVisibility: {
@@ -26,6 +30,7 @@ const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityC
 const visible = ref(props.currentVisibility);
 const loading = ref(false);
 
+const currentEstimationDate = ref(null)
 
 watch(() => props.currentVisibility, (newValue) => {
     visible.value = newValue;
@@ -73,7 +78,7 @@ watch(visible, (newValue) => {
 
 <template>
     <Dialog v-model:visible="visible" modal header="Verifikasi Detail Pengajuan"
-        :style="{ width: '60rem', MaxHeight: '85%' }" @hide="closeDialog">
+        :style="{ width: '60rem', MaxHeight: '90%' }" @hide="closeDialog">
         <div v-if="loading" class="flex justify-center items-center h-40">
             <i class="pi pi-spin pi-spinner text-4xl"></i>
         </div>
@@ -129,7 +134,10 @@ watch(visible, (newValue) => {
                 <label class="font-semibold" for="">Keterangan</label>
                 <p>{{ currentTransaction.keterangan }}</p>
             </div>
-
+            <div class="column mt-2">
+                <label class="font-semibold" for="">Diajukan Oleh</label>
+                <p>{{ currentTransaction.user }}</p>
+            </div>
             <div class="barangs mt-4">
                 <label for="username" class="font-semibold w-full">Daftar Barang Diajukan</label>
                 <div class="w-full max-h-[14rem] overflow-y-scroll scrollbar-thin mt-2">
@@ -166,14 +174,22 @@ watch(visible, (newValue) => {
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="twrapper-right">
+                                    <div class="twrapper-right flex flex-col justify-end items-end gap-y-2">
                                         <div :class="getStatusClass(transaksi.status)"
                                             class="rounded-full px-3 py-[.8px]">
                                             {{ transaksi.status }}
                                         </div>
-                                        <Button icon="pi pi-times" severity="Danger" rounded>
+                                        <div class="btn-group flex gap-1">
+                                            <Button icon="pi pi-pencil" severity="info" rounded
+                                                style="font-size: .8rem">
 
-                                        </Button>
+                                            </Button>
+                                            <Button icon="pi pi-trash" severity="danger" rounded
+                                                style="font-size: .8rem">
+
+                                            </Button>
+
+                                        </div>
 
                                     </div>
 
@@ -183,13 +199,33 @@ watch(visible, (newValue) => {
                     </div>
                 </div>
             </div>
-
+            <div class="verif-input pt-4 grid grid-cols-2 gap-x-3">
+                <div class="keterangan-tambahan flex flex-col w-full">
+                    <label class="font-semibold mb-1" for="">Keterangan Verifikasi</label>
+                    <IconField class="w-full">
+                        <InputIcon class="pi pi-book" />
+                        <InputText class="w-full" v-model="value1" placeholder="Masukan Keterangan Verifikasi" />
+                    </IconField>
+                </div>
+                <div class="tanggal-tambahan flex flex-col">
+                    <label class="font-semibold mb-1" for="">Estimasi Barang Diterima</label>
+                    <DatePicker v-model="currentEstimationDate" dateFormat="d MM yy" showTime hourFormat="24"
+                        placeholder="Masukan Estimasi Tanggal" />
+                </div>
+            </div>
         </div>
-        <div class="tools mt-4 flex gap-3">
-            <Button icon="pi pi-times" @click="triggerDeleteConfirmation" label="Batalkan Pengajuan" severity="danger"
-                outlined rounded />
-            <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
-                severity="success" rounded />
+        <div class="tools mt-4 flex justify-between">
+            <div class="button-left flex gap-3">
+                <Button icon="pi pi-times" @click="triggerDeleteConfirmation" label="Tolak Pengajuan" severity="danger"
+                    outlined rounded />
+                <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
+                    severity="info" rounded />
+            </div>
+            <div class="button-right">
+                <Button icon="pi pi-book" @click="cetakDetailPengajuan(currentTransaction.unique_id)"
+                    label="Simpan Verifikasi" severity="success" rounded />
+            </div>
+
         </div>
     </Dialog>
 </template>

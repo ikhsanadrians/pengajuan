@@ -9,7 +9,7 @@ import TableAdmin from './Components/TableAdmin.vue';
 // import ModalDialog from './Components/ModalDialog.vue';
 import { ref, watch } from 'vue';
 import Toast from 'primevue/toast';
-import ModalDetailRequest from './Components/ModalDetailRequest.vue';
+import ModalDetailRequest from './Components/ModalDetailRequesVerift.vue';
 import { useConfirm } from "primevue/useconfirm";
 // import ConfirmDialog from 'primevue/confirmdialog';
 import axios from 'axios';
