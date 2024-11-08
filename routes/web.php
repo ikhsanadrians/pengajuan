@@ -4,6 +4,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PengajuanController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CetakanController;
 use App\Http\Controllers\AdminController;
@@ -42,7 +43,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::get('/',    [AdminController::class, 'adminIndex'])->name('admin');
             Route::post('/filter-pengajuan',[AdminController::class, 'filterPengajuanUser'])->name('filter-pengajuan-admin');
             Route::post('/get-detail-pengajuan-admin', [PengajuanController::class,'getDetailPengajuan'])->name('get-detail-pengajuan-admin');
-
+            Route::post('/reject-per-transaksi', [TransaksiController::class,'rejectTransaksi'])->name('reject-per-transaksi');
 
             Route::prefix('users')->group(function(){
                 Route::get('/',   [AdminController::class, 'adminUsersIndex'])->name('admin.userIndex');

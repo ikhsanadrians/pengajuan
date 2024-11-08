@@ -19,14 +19,17 @@ const props = defineProps({
         type: String,
         required: true,
     },
-    currentVisibilityConfirmationDelete: {
+    currentVisibilityConfirmationReject: {
         type: Boolean,
         required: true,
     },
-
+    currentBarangId: {
+        type: String,
+        required: true,
+    }
 });
 
-const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityConfirmationDelete']);
+const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityConfirmationReject', 'update:currentBarangId']);
 const visible = ref(props.currentVisibility);
 const loading = ref(false);
 
@@ -48,7 +51,6 @@ const fetchCurrentTransaction = async () => {
             pengajuanId: props.currentTransactionId
         });
         currentTransaction.value = response.data.data;
-        console.log(response);
     } catch (error) {
         console.error('Error fetching transaction:', error);
     } finally {
@@ -61,8 +63,9 @@ const closeDialog = () => {
     emit('update:currentVisibility', false);
 };
 
-const triggerDeleteConfirmation = () => {
-    emit('update:currentVisibilityConfirmationDelete', true);
+const triggerConfirmationReject = (currentBarangId) => {
+    emit('update:currentVisibilityConfirmationReject', true);
+    emit('update:currentBarangId', currentBarangId);
 };
 
 const cetakDetailPengajuan = (code) => {
@@ -184,8 +187,8 @@ watch(visible, (newValue) => {
                                                 style="font-size: .8rem">
 
                                             </Button>
-                                            <Button icon="pi pi-trash" severity="danger" rounded
-                                                style="font-size: .8rem">
+                                            <Button @click="triggerConfirmationReject(transaksi.id)" icon="pi pi-trash"
+                                                severity="danger" rounded style="font-size: .8rem">
 
                                             </Button>
 
@@ -216,8 +219,7 @@ watch(visible, (newValue) => {
         </div>
         <div class="tools mt-4 flex justify-between">
             <div class="button-left flex gap-3">
-                <Button icon="pi pi-times" @click="triggerDeleteConfirmation" label="Tolak Pengajuan" severity="danger"
-                    outlined rounded />
+                <Button icon="pi pi-times" label="Tolak Pengajuan" severity="danger" outlined rounded />
                 <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
                     severity="info" rounded />
             </div>

@@ -39,15 +39,15 @@ class TransaksiRepository
     public function createTransaksi(array $data)
     {
         $data = array_merge($data, [
-            'statusenabled' => true, 
-            'created_at' => Carbon::now(), 
-            'updated_at' => Carbon::now()  
+            'statusenabled' => true,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
         ]);
 
         return DB::table('transaksi')->insert($data);
     }
 
-    
+
 
     public function updateTransaksi($id, array $data)
     {
@@ -58,4 +58,15 @@ class TransaksiRepository
     {
         return DB::table('transaksi')->where('id', $id)->delete();
     }
+
+    public function rejectTransaksi(int $id, string $keterangan)
+    {
+        return DB::table('transaksi')->where('id', $id)->update([
+            'statusenabled' => 0,
+            'status_id' => 4,
+            'keterangan_rejected' => $keterangan,
+            'updated_at' => Carbon::now()
+        ]);
+    }
+
 }
