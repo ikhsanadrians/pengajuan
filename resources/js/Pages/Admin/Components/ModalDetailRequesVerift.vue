@@ -11,6 +11,8 @@ import InputIcon from 'primevue/inputicon';
 import DatePicker from 'primevue/datepicker';
 import { format } from 'date-fns';
 import { router } from '@inertiajs/vue3';
+import { checkIfVerifBtn } from '../Helpers/adminHelpers';
+
 
 
 const props = defineProps({
@@ -52,6 +54,7 @@ watch(() => props.currentVisibility, (newValue) => {
         fetchCurrentTransaction();
     }
 });
+
 
 
 
@@ -286,8 +289,10 @@ watch(visible, (newValue) => {
                     severity="info" rounded />
             </div>
             <div class="button-right">
-                <Button icon="pi pi-book" @click="simpanVerifPengajuan()" label="Simpan Verifikasi" severity="success"
-                    rounded />
+                <Button
+                    :disabled="checkIfVerifBtn(currentTransaction.status_name).btnDisabled === 'true' ? true : false"
+                    :icon="checkIfVerifBtn(currentTransaction.status_name).icon" @click="simpanVerifPengajuan()"
+                    :label="checkIfVerifBtn(currentTransaction.status_name).text" severity="success" rounded />
             </div>
 
         </div>

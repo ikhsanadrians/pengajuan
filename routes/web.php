@@ -45,6 +45,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::post('/get-detail-pengajuan-admin', [PengajuanController::class,'getDetailPengajuan'])->name('get-detail-pengajuan-admin');
             Route::post('/reject-per-transaksi', [TransaksiController::class,'rejectTransaksi'])->name('reject-per-transaksi');
             Route::post('/simpan-verif-pengajuan', [AdminController::class,'SimpanVerifPengajuan'])->name('simpan-verif-pengajuan');
+            Route::post('/reject-per-pengajuan', [PengajuanController::class,'rejectPengajuan'])->name('reject-per-pengajuan');
+
 
             Route::prefix('users')->group(function(){
                 Route::get('/',   [AdminController::class, 'adminUsersIndex'])->name('admin.userIndex');

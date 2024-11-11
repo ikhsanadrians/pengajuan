@@ -90,6 +90,13 @@ class PengajuanController extends Controller
    }
 
 
+//    public function rejectPengajuan(Request $request){
+//         $pengajuanId = $request->pengajuanId;
+
+//         $this->pengajuanRepository
+
+//     }
+
 
 
 

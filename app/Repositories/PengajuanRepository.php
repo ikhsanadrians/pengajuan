@@ -297,6 +297,16 @@ class PengajuanRepository
 }
 
 
+public function RejectPengajuan($id, $keterangan){
+    return DB::table('pengajuan')->where('id', $id)->update([
+        'statusenabled' => 0,
+        'status_id' => 4,
+        'keterangan_rejected' => $keterangan,
+        'updated_at' => Carbon::now()
+    ]);
+}
+
+
 }
 
 ?>
