@@ -41,9 +41,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::middleware('admin')->group(function () {
         Route::prefix('admin')->group(function(){
             Route::get('/',    [AdminController::class, 'adminIndex'])->name('admin');
-            Route::post('/filter-pengajuan',[AdminController::class, 'filterPengajuanUser'])->name('filter-pengajuan-admin');
+            Route::post('/filter-pengajuan',[AdminController::class, 'filterPengajuanAdmin'])->name('filter-pengajuan-admin');
             Route::post('/get-detail-pengajuan-admin', [PengajuanController::class,'getDetailPengajuan'])->name('get-detail-pengajuan-admin');
             Route::post('/reject-per-transaksi', [TransaksiController::class,'rejectTransaksi'])->name('reject-per-transaksi');
+            Route::post('/simpan-verif-pengajuan', [AdminController::class,'SimpanVerifPengajuan'])->name('simpan-verif-pengajuan');
 
             Route::prefix('users')->group(function(){
                 Route::get('/',   [AdminController::class, 'adminUsersIndex'])->name('admin.userIndex');

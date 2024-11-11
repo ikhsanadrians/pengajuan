@@ -9,6 +9,9 @@ import { getStatusClass } from '../Helpers/adminHelpers';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import DatePicker from 'primevue/datepicker';
+import { format } from 'date-fns';
+import { router } from '@inertiajs/vue3';
+
 
 const props = defineProps({
     currentVisibility: {
@@ -26,6 +29,13 @@ const props = defineProps({
     currentBarangId: {
         type: String,
         required: true,
+    },
+    isTransactionLoaded: {
+        type: String,
+        required: true
+    },
+    toastMessage: {
+        type: Function
     }
 });
 
@@ -34,6 +44,7 @@ const visible = ref(props.currentVisibility);
 const loading = ref(false);
 
 const currentEstimationDate = ref(null)
+const keteranganVerifikasi = ref(null)
 
 watch(() => props.currentVisibility, (newValue) => {
     visible.value = newValue;
@@ -41,6 +52,8 @@ watch(() => props.currentVisibility, (newValue) => {
         fetchCurrentTransaction();
     }
 });
+
+
 
 const currentTransaction = ref({});
 
@@ -64,9 +77,58 @@ const closeDialog = () => {
 };
 
 const triggerConfirmationReject = (currentBarangId) => {
-    emit('update:currentVisibilityConfirmationReject', true);
-    emit('update:currentBarangId', currentBarangId);
+    let transaction = currentTransaction.value.transaksi;
+
+    const shouldEmit = !transaction.some((transaction) => {
+        return transaction.id === currentBarangId && transaction.status_id == 4;
+    });
+
+    if (shouldEmit) {
+        emit('update:currentVisibilityConfirmationReject', true);
+        emit('update:currentBarangId', currentBarangId);
+    }
 };
+
+const simpanVerifPengajuan = async () => {
+
+    if (!keteranganVerifikasi.value) {
+        props.toastMessage('warn', 'Peringatan', 'Keterangan Verifikasi harus diisi.');
+        return;
+    }
+
+    if (!currentEstimationDate.value) {
+        props.toastMessage('warn', 'Peringatan', 'Estimasi tanggal harus diisi.');
+        return;
+    }
+
+    const formattedEstimationDate = format(new Date(currentEstimationDate.value), 'yyyy-MM-dd HH:mm:ss');
+
+
+    try {
+        const response = await axios.post('admin/simpan-verif-pengajuan', {
+            pengajuanId: props.currentTransactionId,
+            keterangan: keteranganVerifikasi.value,
+            estimasi: formattedEstimationDate
+
+        });
+
+
+        if (response.data.success) {
+            props.toastMessage('success', 'Info', 'Berhasil Melakukan Verifikasi');
+            currentTransaction.value = response.data.data;
+            router.reload();
+            closeDialog();
+            currentEstimationDate.value = null
+            keteranganVerifikasi.value = null
+        }
+
+
+    } catch (error) {
+        props.toastMessage('error', 'Info', 'Something Went Wrong!');
+    } finally {
+        loading.value = false;
+    }
+}
 
 const cetakDetailPengajuan = (code) => {
     window.open(route('cetakan-detail-pengajuan-user', code), '_blank');
@@ -97,7 +159,7 @@ watch(visible, (newValue) => {
                         </td>
                         <td class="pl-8">
                             <div class="column">
-                                <label class="font-semibold" for="">Departemen Tujuan</label>
+                                <label class="font-semibold" for="">Dept Tujuan</label>
                                 <p>{{ currentTransaction.namadepartement }}</p>
                             </div>
                         </td>
@@ -189,7 +251,6 @@ watch(visible, (newValue) => {
                                             </Button>
                                             <Button @click="triggerConfirmationReject(transaksi.id)" icon="pi pi-trash"
                                                 severity="danger" rounded style="font-size: .8rem">
-
                                             </Button>
 
                                         </div>
@@ -207,7 +268,8 @@ watch(visible, (newValue) => {
                     <label class="font-semibold mb-1" for="">Keterangan Verifikasi</label>
                     <IconField class="w-full">
                         <InputIcon class="pi pi-book" />
-                        <InputText class="w-full" v-model="value1" placeholder="Masukan Keterangan Verifikasi" />
+                        <InputText class="w-full" v-model="keteranganVerifikasi"
+                            placeholder="Masukan Keterangan Verifikasi" />
                     </IconField>
                 </div>
                 <div class="tanggal-tambahan flex flex-col">
@@ -224,8 +286,8 @@ watch(visible, (newValue) => {
                     severity="info" rounded />
             </div>
             <div class="button-right">
-                <Button icon="pi pi-book" @click="cetakDetailPengajuan(currentTransaction.unique_id)"
-                    label="Simpan Verifikasi" severity="success" rounded />
+                <Button icon="pi pi-book" @click="simpanVerifPengajuan()" label="Simpan Verifikasi" severity="success"
+                    rounded />
             </div>
 
         </div>

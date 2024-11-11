@@ -109,6 +109,7 @@ const applyFilters = async () => {
                 </template>
             </Column>
             <Column field="unique_id" header="Kode"></Column>
+            <Column field="username" header="Diajukan Oleh"></Column>
             <Column field="keterangan" header="Keterangan">
                 <template #body="{ data }">
                     <span :title="data.keterangan">

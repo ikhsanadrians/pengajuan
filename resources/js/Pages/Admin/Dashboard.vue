@@ -62,7 +62,8 @@ const handleFilterChange = async (filters) => {
 
     try {
         isFiltered.value = true;
-        const response = await axios.post('/user/filter-pengajuan', { params: filters });
+        const response = await axios.post('/admin/filter-pengajuan', { params: filters });
+        console.log(response.data.transaksis)
         currentTransactions.value = response.data.transaksis;
     } catch (error) {
         loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
@@ -105,6 +106,7 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
         @update:currentVisibility="modalVisibilityDetailRequest = $event"
         :currentVisibilityConfirmationReject="modalVisibilityConfirmationReject"
         @update:currentVisibilityConfirmationReject="modalVisibilityConfirmationReject = $event"
-        :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event" />
+        :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event"
+        :toastMessage="loadToastMessage" />
     <Toast position="bottom-right" group="br" />
 </template>

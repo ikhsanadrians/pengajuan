@@ -57,7 +57,6 @@ class PengajuanRepository
            ->get();
 
 
-
          $pengajuanBarang->transform(function ($item) {
                  try {
                   if ($item->created_at) {
@@ -199,6 +198,104 @@ class PengajuanRepository
 
         return $pengajuanBarang;
     }
+
+    public function getFilteredPengajuanBarangsAdmin($startDate = null, $endDate = null, $status = null, $searchQuery = null)
+    {
+        $loginedUser = Auth::user()->id ?? null;
+
+        $query = DB::table('pengajuanbarang as pb')
+            ->select('pb.*', 'sts.nameexternal') // Spesifik kolom untuk menghindari konflik
+            ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
+            ->where('pb.statusenabled', '=', '1');
+
+            if ($startDate && $endDate) {
+                // Set waktu start ke awal hari (00:00:00) dan end ke akhir hari (23:59:59)
+                $query->whereBetween('pb.created_at', [
+                    $startDate . ' 00:00:00',
+                    $endDate . ' 23:59:59'
+                ]);
+            } elseif ($startDate) {
+                // Untuk single date, gunakan whereBetween juga dengan start dan end di hari yang sama
+                $query->whereBetween('pb.created_at', [
+                    $startDate . ' 00:00:00',
+                    $startDate . ' 23:59:59'
+                ]);
+            } elseif ($endDate) {
+                // Sama seperti di atas
+                $query->whereBetween('pb.created_at', [
+                    $endDate . ' 00:00:00',
+                    $endDate . ' 23:59:59'
+                ]);
+            }
+
+        if ($status) {
+            $query->where('sts.id', '=', $status);
+        }
+
+        if ($searchQuery) {
+            $query->where('pb.unique_id', 'like', '%' . $searchQuery . '%');
+        }
+
+        $pengajuanBarang = $query->orderBy('pb.created_at', 'desc')->get();
+
+        // Transform tanggal hanya jika nilai tidak null
+        $pengajuanBarang->transform(function ($item) {
+            if ($item->created_at) {
+                $item->created_at = formatTanggalWithDayAndTime($item->created_at);
+            } else {
+                $item->created_at = 'Tanggal tidak tersedia';
+            }
+            return $item;
+        });
+
+        return $pengajuanBarang;
+    }
+
+    public function simpanVerifPengajuan($pengajuanId, $keterangan = null, $estimasi = null)
+{
+    try {
+        // Mulai transaksi database
+        DB::beginTransaction();
+
+        // Update tabel pengajuanbarang
+           $pengajuan = DB::table('pengajuanbarang')
+            ->where('unique_id', $pengajuanId)
+            ->first();
+
+            $affectedRowsPengajuan = DB::table('pengajuanbarang')
+            ->where('id', $pengajuan->id)
+            ->update([
+                'status_id' => 2,
+                'keterangan_approved' => $keterangan,
+                'estimasi' => $estimasi,
+                'updated_at' => now()
+            ]);
+
+        // Update tabel transaksi, tetapi hanya yang bukan status_id 4
+        $affectedRowsTransaksi = DB::table('transaksi')
+            ->where('pengajuan_id', $pengajuan->id)
+            ->where('status_id', '!=', 4) // Pastikan hanya update jika status_id bukan 4
+            ->update([
+                'status_id' => 2,
+                'updated_at' => now()
+            ]);
+
+        // Commit transaksi jika semua operasi berhasil
+        DB::commit();
+
+        return [
+            'affectedRowsPengajuan' => $affectedRowsPengajuan,
+            'affectedRowsTransaksi' => $affectedRowsTransaksi
+        ];
+    } catch (\Exception $e) {
+        // Rollback transaksi jika ada kesalahan
+        DB::rollBack();
+
+        \Log::error('Error updating pengajuan or transaksi: ' . $e->getMessage());
+        throw $e; // Lempar error agar bisa ditangani oleh controller
+    }
+}
+
 
 }
 
