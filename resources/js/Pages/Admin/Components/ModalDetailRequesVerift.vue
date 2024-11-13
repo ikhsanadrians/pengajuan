@@ -22,11 +22,12 @@ const props = defineProps({
     },
     currentTransactionId: {
         type: String,
-        required: true,
     },
     currentVisibilityConfirmationReject: {
         type: Boolean,
-        required: true,
+    },
+    currentVisibilityConfirmationRejectPengajuan: {
+        type: Boolean,
     },
     currentBarangId: {
         type: String,
@@ -54,8 +55,6 @@ watch(() => props.currentVisibility, (newValue) => {
         fetchCurrentTransaction();
     }
 });
-
-
 
 
 const currentTransaction = ref({});
@@ -91,6 +90,16 @@ const triggerConfirmationReject = (currentBarangId) => {
         emit('update:currentBarangId', currentBarangId);
     }
 };
+
+
+const triggerConfirmationRejectPengajuan = (currentPengajuanId) => {
+    
+    emit('update:currentVisibilityConfirmationRejectPengajuan', true);
+    emit('update:currentTransactionId', currentTransactionId);
+    
+};
+
+
 
 const simpanVerifPengajuan = async () => {
 
@@ -284,7 +293,7 @@ watch(visible, (newValue) => {
         </div>
         <div class="tools mt-4 flex justify-between">
             <div class="button-left flex gap-3">
-                <Button icon="pi pi-times" label="Tolak Pengajuan" severity="danger" outlined rounded />
+                <Button icon="pi pi-times" @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)" label="Tolak Pengajuan" severity="danger" outlined rounded />
                 <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
                     severity="info" rounded />
             </div>

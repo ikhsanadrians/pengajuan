@@ -90,12 +90,17 @@ class PengajuanController extends Controller
    }
 
 
-//    public function rejectPengajuan(Request $request){
-//         $pengajuanId = $request->pengajuanId;
+   public function rejectPengajuan(Request $request){
+        $pengajuanId = $request->pengajuanId;
+        $keteranganRejected = $request->keteranganRejected;
 
-//         $this->pengajuanRepository
+        $this->pengajuanRepository->RejectPengajuan($pengajuanId, $keteranganRejected);
 
-//     }
+        return response()->json([
+            "message" => "Success, Pengajuan Rejected",
+            "data" => null
+        ], 200);
+    }
 
 
 

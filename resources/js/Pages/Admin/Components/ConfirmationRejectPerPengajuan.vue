@@ -49,23 +49,24 @@ const saveRejectPengajuanReason = async () => {
     }
     try {
         loading.value = true;
-        const response = await axios.post('admin/reject-per-transaksi', {
+        const response = await axios.post('admin/reject-per-pengajuan', {
             pengajuan_id: currentPengajuanId.value,
             keterangan: keterangan.value
         });
 
         if (response.data.data == 1) {
-            props.toastMessage('success', 'Info', 'Berhasil Menolak Transaksi!');
+            props.toastMessage('success', 'Info', 'Berhasil Menolak Pengajuan!');
             closeDialog();
         } else {
-            props.toastMessage('error', 'Info', 'Gagal Menolak Transaksi');
+            props.toastMessage('error', 'Info', 'Gagal Menolak Pengajuan');
         }
     } catch (error) {
         props.toastMessage('error', 'Info', error);
     } finally {
         loading.value = false;
     }
-};
+}; 
+
 </script>
 
 <template>

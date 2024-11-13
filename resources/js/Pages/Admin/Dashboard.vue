@@ -11,7 +11,7 @@ import { useConfirm } from "primevue/useconfirm";
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 import ConfirmationRejectPerBarang from './Components/ConfirmationRejectPerBarang.vue';
-
+import ConfirmationRejectPerPengajuan from './Components/ConfirmationRejectPerPengajuan.vue';
 
 
 const confirm = useConfirm();
@@ -76,6 +76,9 @@ const modalVisibilityDetailRequest = ref(false);
 const currentPengajuanId = ref(null);
 const currentBarangId = ref(null);
 const modalVisibilityConfirmationReject = ref(false);
+const modalVisibilityConfirmationRejectPengajuan = ref(false);
+
+
 
 const handleBtn = (typeHandle) => {
     typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
@@ -101,11 +104,18 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     <ConfirmationRejectPerBarang :currentVisibility="modalVisibilityConfirmationReject"
         @update:currentVisibility="modalVisibilityConfirmationReject = $event" :currentBarangId="currentBarangId"
         @update:currentBarangId="currentBarangId = $event" :toastMessage="loadToastMessage" />
+    <ConfirmationRejectPerPengajuan :currentVisibility="modalVisibilityConfirmationRejectPengajuan" 
+          @update:currentVisibility="modalVisibilityConfirmationReject = $event" :currentPengajuanId="currentPengajuanId"
+          @update:currentPengajuanId="currentPengajuanId = $event" :toastMessage="loadToastMessage" />
+ 
+    />
     <ModalDetailRequestVerif :currentTransactionId="currentPengajuanId"
         :currentVisibility="modalVisibilityDetailRequest"
         @update:currentVisibility="modalVisibilityDetailRequest = $event"
         :currentVisibilityConfirmationReject="modalVisibilityConfirmationReject"
         @update:currentVisibilityConfirmationReject="modalVisibilityConfirmationReject = $event"
+        :currentVisibiltyConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan"
+        @update:currentVisibilityConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan = $event"
         :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event"
         :toastMessage="loadToastMessage" />
     <Toast position="bottom-right" group="br" />
