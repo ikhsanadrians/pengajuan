@@ -65,12 +65,12 @@ const saveRejectPengajuanReason = async () => {
     } finally {
         loading.value = false;
     }
-}; 
+};
 
 </script>
 
 <template>
-    <Dialog v-model:visible="visible" modal header="Alasan Barang Ditolak" :style="{ width: '50rem', MaxHeight: '90%' }"
+    <Dialog v-model:visible="visible" modal header="Alasan Pengajuan Ditolak" :style="{ width: '50rem', MaxHeight: '90%' }"
         @hide="closeDialog">
         <div class="text-area">
             <label class="font-semibold">Keterangan</label>
