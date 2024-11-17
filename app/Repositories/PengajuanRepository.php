@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Interfaces\PengajuanBarangRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PengajuanRepository
 {
@@ -298,7 +299,7 @@ class PengajuanRepository
 
 
 public function RejectPengajuan($id, $keterangan){
-    return DB::table('pengajuan')->where('id', $id)->update([
+    return DB::table('pengajuanbarang')->where('unique_id', $id)->update([
         'status_id' => 4,
         'keterangan_rejected' => $keterangan,
         'updated_at' => Carbon::now()

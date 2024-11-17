@@ -98,7 +98,8 @@ class PengajuanController extends Controller
 
         return response()->json([
             "message" => "Success, Pengajuan Rejected",
-            "data" => null
+            "payload" => true,
+            "data" => [$pengajuanId, $keteranganRejected]
         ], 200);
     }
 

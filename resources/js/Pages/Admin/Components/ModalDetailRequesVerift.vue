@@ -93,10 +93,10 @@ const triggerConfirmationReject = (currentBarangId) => {
 
 
 const triggerConfirmationRejectPengajuan = (currentPengajuanId) => {
-    
+
     emit('update:currentVisibilityConfirmationRejectPengajuan', true);
     emit('update:currentTransactionId', currentTransactionId);
-    
+
 };
 
 
@@ -280,20 +280,25 @@ watch(visible, (newValue) => {
                     <label class="font-semibold mb-1" for="">Keterangan Verifikasi</label>
                     <IconField class="w-full">
                         <InputIcon class="pi pi-book" />
+
                         <InputText class="w-full" v-model="keteranganVerifikasi"
+                            :value="currentTransaction.keterangan_approved ? currentTransaction.keterangan_approved : keteranganVerifikasi"
+                            :disabled="currentTransaction.keterangan_approved ? true : false"
                             placeholder="Masukan Keterangan Verifikasi" />
                     </IconField>
                 </div>
                 <div class="tanggal-tambahan flex flex-col">
                     <label class="font-semibold mb-1" for="">Estimasi Barang Diterima</label>
-                    <DatePicker v-model="currentEstimationDate" dateFormat="d MM yy" showTime hourFormat="24"
-                        placeholder="Masukan Estimasi Tanggal" />
+                    <DatePicker v-model="currentEstimationDate"
+                        :value="currentTransaction.estimasi ? new Date(currentTransaction.estimasi) : currentEstimationDate"
+                        dateFormat="d MM yy" showTime hourFormat="24" placeholder="Masukan Estimasi Tanggal" />
                 </div>
             </div>
         </div>
         <div class="tools mt-4 flex justify-between">
             <div class="button-left flex gap-3">
-                <Button icon="pi pi-times" @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)" label="Tolak Pengajuan" severity="danger" outlined rounded />
+                <Button icon="pi pi-times" @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)"
+                    label="Tolak Pengajuan" severity="danger" outlined rounded />
                 <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
                     severity="info" rounded />
             </div>

@@ -5,6 +5,7 @@ import Textarea from 'primevue/textarea';
 import FloatLabel from 'primevue/floatlabel';
 import Button from 'primevue/button';
 import axios from 'axios';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     currentVisibility: {
@@ -16,10 +17,13 @@ const props = defineProps({
     },
     toastMessage: {
         type: Function
+    },
+    isCurrentDetailRequestModalOpen: {
+        type: Boolean
     }
 });
 
-const emit = defineEmits(['update:currentVisibility']);
+const emit = defineEmits(['update:currentVisibility', 'update:isCurrentDetailRequestModalOpen']);
 const visible = ref(props.currentVisibility);
 const loading = ref(false);
 const currentBarangId = ref(props.currentBarangId);
@@ -36,7 +40,9 @@ watch(() => props.currentBarangId, (newValue) => {
 const closeDialog = () => {
     visible.value = false;
     emit('update:currentVisibility', false);
+    emit('update:isCurrentDetailRequestModalOpen', false)
 };
+
 
 watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
@@ -50,13 +56,14 @@ const saveRejectPengajuanReason = async () => {
     try {
         loading.value = true;
         const response = await axios.post('admin/reject-per-pengajuan', {
-            pengajuan_id: currentPengajuanId.value,
-            keterangan: keterangan.value
+            pengajuanId: props.currentPengajuanId,
+            keteranganRejected: keterangan.value
         });
 
-        if (response.data.data == 1) {
+        if (response.data.payload) {
             props.toastMessage('success', 'Info', 'Berhasil Menolak Pengajuan!');
             closeDialog();
+            router.reload();
         } else {
             props.toastMessage('error', 'Info', 'Gagal Menolak Pengajuan');
         }
@@ -70,8 +77,8 @@ const saveRejectPengajuanReason = async () => {
 </script>
 
 <template>
-    <Dialog v-model:visible="visible" modal header="Alasan Pengajuan Ditolak" :style="{ width: '50rem', MaxHeight: '90%' }"
-        @hide="closeDialog">
+    <Dialog v-model:visible="visible" modal header="Alasan Pengajuan Ditolak"
+        :style="{ width: '50rem', MaxHeight: '90%' }" @hide="closeDialog">
         <div class="text-area">
             <label class="font-semibold">Keterangan</label>
             <Textarea v-model="keterangan" placeholder="Masukan Keterangan" class="w-full mt-1" id="over_label" rows="5"

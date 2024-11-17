@@ -107,7 +107,8 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     <ConfirmationRejectPerPengajuan :currentVisibility="modalVisibilityConfirmationRejectPengajuan"
         @update:currentVisibility="modalVisibilityConfirmationRejectPengajuan = $event"
         :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event"
-        :toastMessage="loadToastMessage" />
+        :toastMessage="loadToastMessage" :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
+        @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event" />
 
     />
     <ModalDetailRequestVerif :currentTransactionId="currentPengajuanId"
