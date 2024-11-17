@@ -72,6 +72,15 @@ const handleFilterChange = async (filters) => {
     }
 };
 
+const handleRejectionSuccess = () => {
+    // Access `fetchCurrentTransaction` in the `ModalDetailRequestVerif` component via its ref
+    const modalDetailRef = ref(null);
+
+    if (modalDetailRef.value) {
+        modalDetailRef.value.fetchCurrentTransaction();
+    }
+};
+
 const modalVisibilityDetailRequest = ref(false);
 const currentPengajuanId = ref(null);
 const currentBarangId = ref(null);
@@ -90,6 +99,8 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
 };
 
 
+
+
 </script>
 
 <template>
@@ -103,7 +114,10 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     </div>
     <ConfirmationRejectPerBarang :currentVisibility="modalVisibilityConfirmationReject"
         @update:currentVisibility="modalVisibilityConfirmationReject = $event" :currentBarangId="currentBarangId"
-        @update:currentBarangId="currentBarangId = $event" :toastMessage="loadToastMessage" />
+        @update:currentBarangId="currentBarangId = $event" :toastMessage="loadToastMessage"
+        @rejectionSuccess="handleRejectionSuccess" />
+
+
     <ConfirmationRejectPerPengajuan :currentVisibility="modalVisibilityConfirmationRejectPengajuan"
         @update:currentVisibility="modalVisibilityConfirmationRejectPengajuan = $event"
         :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event"
@@ -119,6 +133,6 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
         :currentVisibiltyConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan"
         @update:currentVisibilityConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan = $event"
         :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event"
-        :toastMessage="loadToastMessage" />
+        :toastMessage="loadToastMessage" ref="modalDetailRequestVerif" />
     <Toast position="bottom-right" group="br" />
 </template>

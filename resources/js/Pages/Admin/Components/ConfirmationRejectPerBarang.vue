@@ -16,10 +16,15 @@ const props = defineProps({
     },
     toastMessage: {
         type: Function
+    },
+    onSuccessReject: {
+        type: Function,
+        required: true
     }
+
 });
 
-const emit = defineEmits(['update:currentVisibility']);
+const emit = defineEmits(['update:currentVisibility', 'refreshTransaction']);
 const visible = ref(props.currentVisibility);
 const loading = ref(false);
 const currentBarangId = ref(props.currentBarangId);
@@ -31,6 +36,10 @@ watch(() => props.currentVisibility, (newValue) => {
 
 watch(() => props.currentBarangId, (newValue) => {
     currentBarangId.value = newValue;
+});
+
+watch(() => emit('refreshTransaction'), () => {
+    fetchCurrentTransaction();
 });
 
 const closeDialog = () => {
@@ -57,6 +66,7 @@ const saveRejectReason = async () => {
         if (response.data.data == 1) {
             props.toastMessage('success', 'Info', 'Berhasil Menolak Transaksi!');
             closeDialog();
+            emit('rejectionSuccess');
         } else {
             props.toastMessage('error', 'Info', 'Gagal Menolak Transaksi');
         }

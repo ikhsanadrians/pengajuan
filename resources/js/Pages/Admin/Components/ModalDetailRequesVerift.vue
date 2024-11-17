@@ -39,7 +39,8 @@ const props = defineProps({
     },
     toastMessage: {
         type: Function
-    }
+    },
+
 });
 
 const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityConfirmationReject', 'update:currentBarangId']);
