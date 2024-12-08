@@ -9,7 +9,7 @@ class UserRepository
 {
     public function getAllUsers()
     {
-        return DB::table('users')->get();
+        return DB::table('users as usr')->leftJoin('roles', 'usr.role_id', '=', 'roles.id')->select('usr.*', 'roles.namarole as role')->get();
     }
 
     public function getUserById($id)

@@ -9,17 +9,21 @@ use App\Repositories\TransaksiRepository;
 use Inertia\Inertia;
 use App\Repositories\PengajuanRepository;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\UserRepository;
+
 
 
 class AdminController extends Controller
 {
 
-    public function __construct(TransaksiRepository $transaksiRepository, BarangRepository $barangRepository, DepartemenRepository $departemenRepository, PengajuanRepository $pengajuanRepository)
+    public function __construct(TransaksiRepository $transaksiRepository, BarangRepository $barangRepository, DepartemenRepository $departemenRepository, PengajuanRepository $pengajuanRepository, UserRepository $userRepository
+    )
     {
         $this->transaksiRepository = $transaksiRepository;
         $this->barangRepository = $barangRepository;
         $this->departemenRepository = $departemenRepository;
         $this->pengajuanRepository = $pengajuanRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function adminIndex(){
@@ -47,6 +51,13 @@ class AdminController extends Controller
         return response()->json([
             'transaksis' => $filteredTransaksis
         ]);
+    }
+
+
+    public function adminUsersIndex(){
+            $users = $this->userRepository->getAllUsers();
+
+            return Inertia::render('Admin/AddUser', ['users' => $users]);
     }
 
 

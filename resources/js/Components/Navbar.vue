@@ -32,7 +32,7 @@ const logout = () => {
     <div class="bg-white h-16 shadow-sm border-b-[1.5px] border-gray-300 sticky top-0 z-30">
         <div class="container mx-auto px-8 flex w-full items-center h-full">
             <div class="w-full flex justify-between items-center py-8">
-                <Link class="flex items-center font-bold" href="/">
+                <Link class="flex items-center font-bold">
                 <div class="flex flex-col">
                     <h1>PT Intertama Trikencana Bersinar</h1>
                     <p class="text-gray-600 font-light">Pengajuan Barang</p>
@@ -84,10 +84,16 @@ const logout = () => {
     </Popover>
     <Popover ref="opNav" class="w-[20rem] sticky top-2">
         <div class="navigation flex flex-col gap-4">
-            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
-                <i class="pi pi-angle-right"></i>
-                <p>Tambah User</p>
-            </div>
+            <Link href="/admin"
+                class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+            <i class="pi pi-angle-right"></i>
+            <p>Dashboard</p>
+            </Link>
+            <Link href="/admin/users"
+                class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+            <i class="pi pi-angle-right"></i>
+            <p>Tambah User</p>
+            </Link>
             <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
                 <i class="pi pi-angle-right"></i>
                 <p>Tambah Barang</p>
