@@ -9,7 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useToast } from 'primevue/usetoast';
 
-defineProps({
+const props = defineProps({
     canResetPassword: Boolean,
     status: String,
 });
@@ -52,7 +52,7 @@ const submit = () => {
 
     <AuthenticationCard>
         <template #logo>
-            <AuthenticationCardLogo />
+             <img src="../../../../public/logo/ptitbreal.png" class="h-16"/>
         </template>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">

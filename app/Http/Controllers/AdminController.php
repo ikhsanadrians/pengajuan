@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use App\Repositories\UserRepository;
 
 
-
 class AdminController extends Controller
 {
 
@@ -31,7 +30,7 @@ class AdminController extends Controller
         $barangs = $this->barangRepository->getAllBarangs();
         $departements = $this->departemenRepository->getAllDepartements();
         $statutes = DB::table('status')->get();
-
+        $userRoles = $this->userRepository->getAllRolesUser();
 
         return Inertia::render('Admin/Dashboard', ["transaksis" => $transaksis, 'barangs' => $barangs, 'departements' => $departements, 'statuses' => $statutes]);
     }
@@ -56,8 +55,10 @@ class AdminController extends Controller
 
     public function adminUsersIndex(){
             $users = $this->userRepository->getAllUsers();
+            $rolesUser = $this->userRepository->getAllRolesUser();
+            $departementsUser = $this->departemenRepository->getAllDepartements();
 
-            return Inertia::render('Admin/AddUser', ['users' => $users]);
+            return Inertia::render('Admin/AddUser', ['users' => $users, 'rolesUser' => $rolesUser, 'departementsUser' => $departementsUser]);
     }
 
 

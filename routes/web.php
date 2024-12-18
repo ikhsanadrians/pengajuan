@@ -8,6 +8,8 @@ use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CetakanController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -50,8 +52,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
             Route::prefix('users')->group(function(){
                 Route::get('/',   [AdminController::class, 'adminUsersIndex'])->name('admin.userIndex');
-                Route::post('/add',  [AdminController::class, 'adminUsersAdd'])->name('admin.userAdd');
-                Route::post('/delete',  [AdminController::class, 'adminUsersDelete'])->name('admin.userDelete');
+                Route::post('/{id}',[UserController::class, 'showUser'])->name('admin.showUser');
+                Route::post('/{id}/update', [UserController::class, 'updateUser'])->name('admin.update');
+                Route::post('/add',  [UserController::class, 'storeUser'])->name('admin.addUserPost');
+                Route::post('/delete',  [UserController::class, 'deleteUser'])->name('admin.userDelete');
             });
 
             Route::prefix('barang')->group(function(){

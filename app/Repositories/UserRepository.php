@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Support\Facades\Log;
+
 
 class UserRepository
 {
@@ -24,13 +26,24 @@ class UserRepository
 
     public function updateUser($id, array $data)
     {
-        return DB::table('users')->where('id', $id)->update($data);
+         return DB::table('users')->where('id', $id)->update($data);
     }
 
     public function deleteUser($id)
     {
-        return DB::table('users')->where('id', $id)->delete();
+        try {
+            return DB::table('users')->where('id', $id)->delete();
+        } catch (\Exception $e) {
+            Log::error('Delete user failed', ['id' => $id, 'error' => $e->getMessage()]);
+            return false;
+        }
     }
+    
+    public function getAllRolesUser(){
+        return DB::table('roles')->get(); 
+    }
+
+    
 }
 
 ?>

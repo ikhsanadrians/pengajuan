@@ -21,7 +21,7 @@ const logout = () => {
 
 <template>
     <div>
-        <Head :title="title" />
+        <Head :title="Pengajuan Barang | PT Intertama Trikencana Bersinar" />
         <Banner />
         <div class="min-h-screen bg-gray-100">
             <main>

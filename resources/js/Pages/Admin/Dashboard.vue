@@ -38,6 +38,10 @@ const props = defineProps({
     statuses: {
         type: Array,
         default: () => []
+    },
+    userRoles: {
+        type: Array,
+        default: () => []
     }
 });
 
