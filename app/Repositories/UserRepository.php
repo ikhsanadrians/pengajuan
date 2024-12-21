@@ -11,7 +11,7 @@ class UserRepository
 {
     public function getAllUsers()
     {
-        return DB::table('users as usr')->leftJoin('roles', 'usr.role_id', '=', 'roles.id')->select('usr.*', 'roles.namarole as role')->get();
+        return DB::table('users as usr')->leftJoin('roles', 'usr.role_id', '=', 'roles.id')->leftJoin('departements as dpt', 'dpt.id' ,'=' , 'usr.departement_id')->select('usr.*', 'roles.namarole as role', 'dpt.namadepartemen')->get();
     }
 
     public function getUserById($id)

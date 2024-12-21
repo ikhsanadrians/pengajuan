@@ -20,7 +20,7 @@ const props = defineProps({
     rolesUser: {
         type: Array,
         default: () => [],
-    },
+    },  
     departementsUser: {
         type: Array,
         default: () => []
@@ -44,9 +44,6 @@ const filteredUsers = computed(() => {
     });
 });
 
-const toggleModalAddUser = () => {
-    modalVisibilityAddNewUser.value = true;
-};
 
 const modalVisibilityAddNewUser = ref(false);
 const modalVisibilityEditUser = ref(false);
@@ -56,9 +53,13 @@ const currentUserId = ref(null);
 const currentUserToDeleteId = ref(null);
 
 const toggleEditUserModal = (userId) => {
-    console.log(userId);
     modalVisibilityEditUser.value = true;
     currentUserId.value = userId;
+};
+
+
+const toggleModalAddUser = () => {
+    modalVisibilityAddNewUser.value = true;
 };
 
 const triggerDeleteConfirmation = (userId) => {
@@ -72,9 +73,10 @@ const refreshUsers = () => {
 </script>
     
 
-<template>
+<template>    
+
     <Navbar />
-    <AddNewUserModal :toastMessage="loadToastMessage" :currentVisibility="modalVisibilityAddNewUser" :rolesUserOption="rolesUser" :departementsUser="departementsUser"/>
+    <AddNewUserModal :toastMessage="loadToastMessage" v-model:currentVisibility="modalVisibilityAddNewUser"  :rolesUserOption="rolesUser" :departementsUser="departementsUser"/>
     <UserEditModal :toastMessage="loadToastMessage" 
         :rolesUserOption="rolesUser" :departementsUser="departementsUser" :currentUserId="currentUserId" @update:currentUserId="currentUserId = $event"  :currentVisibility="modalVisibilityEditUser" @update:currentVisibility="modalVisibilityEditUser = $event"
         @refreshUsers="refreshUsers"/>
@@ -97,8 +99,7 @@ const refreshUsers = () => {
             <div class="wrapper flex gap-x-8 w-full">
                 <div class="wrapper w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-4">
                     <Card v-for="(user, index) in filteredUsers" :key="user.id" style="overflow: hidden"
-                        class="w-full border-[1.8px] border-slate-200 flex flex-col items-center relative">
-                        
+                        class="w-full border-[1.8px] border-slate-200 flex flex-col items-center relative py-4 rounded-md">
                         <template #header>
                             <p class="text-sm text-gray-500 absolute top-4 right-4">{{ user.statusenabled ? 'Aktif' : 'Tidak Aktif' }}
                             </p>
@@ -111,15 +112,25 @@ const refreshUsers = () => {
                             <p class="text-[15px] text-center text-gray-400">{{ user.namalengkap ||  "-" }}</p>
                         </template>
                         <template #content>
-                            <div class="roles flex justify-center self-center">
-                                <p class="text-sm text-gray-500 text-center flex items-center gap-x-1 bg-yellow-200 text-yellow-600 rounded-2xl w-fit px-4 py-1">
-                                    <i class="pi pi-id-card"></i> 
-                                    {{ user.role.toUpperCase() }}
-                                </p>
+                            <div class="flex items-center w-full justify-center gap-x-2 mt-1">
+                                <div class="roles flex justify-center self-center">
+                                    <p class="text-sm text-gray-500 text-center flex items-center gap-x-1 bg-yellow-200 text-yellow-600 rounded-2xl w-fit px-4 py-1">
+                                        <i class="pi pi-id-card"></i> 
+                                        {{ user.role.toUpperCase() }}
+                                    </p>
+                                </div>
+                                <div class="departament flex justify-center self-center">
+                                    <p class="text-sm text-gray-500 text-center flex items-center gap-x-1 bg-blue-200 text-blue-600 rounded-2xl w-fit px-4 py-1">
+                                        <i class="pi pi-building"></i> 
+                                        {{ user.namadepartemen || '-' }}
+                                    </p>
+                                </div>
                             </div>
+                          
+                            
                         </template>
                         <template #footer>
-                            <div class="flex w-full gap-4 mt-1">
+                            <div class="flex w-full gap-4 mt-4 items-center border-t-[1.2px] border-gray-300 pt-3">
                                 <Button @click="toggleEditUserModal(user.id)" rounded icon="pi pi-pencil" label="Edit" severity="secondary" outlined class="w-full" />
                                 <Button @click="triggerDeleteConfirmation(user.id)" rounded icon="pi pi-trash" label="Hapus" severity="danger" class="w-full" />
                             </div>

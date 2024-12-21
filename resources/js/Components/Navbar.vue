@@ -102,10 +102,10 @@ const logout = () => {
                 <i class="pi pi-angle-right"></i>
                 <p>Tambah Kategori</p>
             </div>
-            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+            <Link href="/admin/departements/" class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
                 <i class="pi pi-angle-right"></i>
                 <p>Tambah Departement</p>
-            </div>
+            </Link>
         </div>
     </Popover>
 </template>

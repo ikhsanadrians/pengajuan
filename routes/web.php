@@ -8,6 +8,7 @@ use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CetakanController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\UserController;
 
 
@@ -70,10 +71,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
                 Route::post('/delete',  [BarangController::class, 'adminKategoriDelete'])->name('admin.KategoriDelete');
             });
 
-            Route::prefix('departement')->group(function(){
-                Route::get('/',   [BarangController::class, 'adminDepartementIndex'])->name('admin.DepartementIndex');
-                Route::post('/add',  [BarangController::class, 'adminDepartementAdd'])->name('admin.DepartementAdd');
-                Route::post('/delete',  [BarangController::class, 'adminDepartementDelete'])->name('admin.DepartementDelete');
+            Route::prefix('departements')->group(function(){
+                Route::get('/',   [DepartementController::class, 'adminDepartementIndex'])->name('admin.DepartementIndex');
+                Route::get('/{id}', [DepartementController::class, 'adminDepartementShow'])->name('admin.DepartementShow');
+                Route::post('/add',  [DepartementController::class, 'adminDepartementAdd'])->name('admin.DepartementAdd');
+                Route::post('/delete',  [DepartementController::class, 'adminDepartementDelete'])->name('admin.DepartementDelete');
             });
 
 

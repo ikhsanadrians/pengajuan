@@ -25,6 +25,9 @@ const props = defineProps({
 const emit = defineEmits(['update:currentVisibility']);
 
 const visible = ref(props.currentVisibility);
+watch(() => props.currentVisibility, (newValue) => {
+    visible.value = newValue;
+});
 
 // Data bindings
 const fullName = ref('');
@@ -34,14 +37,8 @@ const selectedDepartementUser = ref(null);
 const password = ref('');
 const confirmPassword = ref('');
 
-// Watch the visibility prop
-watch(() => props.currentVisibility, (newValue) => {
-    visible.value = newValue;
-});
 
-// Method to close the dialog
 const closeDialog = () => {
-    visible.value = false;
     emit('update:currentVisibility', false);
 };
 
