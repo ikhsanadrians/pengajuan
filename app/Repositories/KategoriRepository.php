@@ -8,7 +8,7 @@ class KategoriRepository
 {
     public function getAllKategoris()
     {
-        return DB::table('kategori')->get()->all();
+        return DB::table('kategori')->get();
     }
 
     public function getKategoriById($id)

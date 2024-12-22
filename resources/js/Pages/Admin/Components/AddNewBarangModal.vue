@@ -2,9 +2,10 @@
 import Dialog from 'primevue/dialog';
 import { ref, watch } from 'vue';
 import InputText from 'primevue/inputtext';
-import Textarea from 'primevue/textarea';
+import Select from 'primevue/select';
 import Button from 'primevue/button';
 import { router } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const props = defineProps({
     currentVisibility: {
@@ -25,13 +26,10 @@ const emit = defineEmits(['update:currentVisibility', 'refreshBarangs']);
 const visible = ref(props.currentVisibility);
 
 // Data bindings
-const id = ref(null);
 const namabarang = ref('');
 const quantity = ref(0);
 const category_id = ref(null);
 const satuan = ref('');
-const created_at = ref('');
-const updated_at = ref('');
 
 // Watch the visibility prop
 watch(() => props.currentVisibility, (newValue) => {
@@ -72,13 +70,10 @@ const simpanBarangBaru = async () => {
 
     // Prepare the data object
     const data = {
-        id: id.value,
         namabarang: namabarang.value,
         quantity: quantity.value,
         category_id: category_id.value,
-        satuan: satuan.value,
-        created_at: created_at.value,
-        updated_at: updated_at.value
+        satuan: satuan.value
     };
 
     try {
@@ -86,16 +81,6 @@ const simpanBarangBaru = async () => {
             preserveScroll: true,
             onSuccess: () => {
                 props.toastMessage('success', 'Berhasil', 'Barang berhasil ditambahkan!');
-
-                // Reset fields after successful submission
-                id.value = null;
-                namabarang.value = '';
-                quantity.value = 0;
-                category_id.value = null;
-                satuan.value = '';
-                created_at.value = '';
-                updated_at.value = '';
-
                 closeDialog();
                 emit('refreshBarangs');
             },
@@ -126,11 +111,8 @@ const simpanBarangBaru = async () => {
         </div>
         <div class="flex items-center gap-3 mb-3 flex-col">
             <label for="category" class="font-semibold w-full">Kategori</label>
-            <select id="category" class="flex-auto w-full" v-model="category_id">
-                <option v-for="category in props.categories" :key="category.id" :value="category.id">
-                    {{ category.name }}
-                </option>
-            </select>
+            <Select showClear filter v-model="category_id" :options="props.categories" optionLabel="nameexternal"
+                optionValue="id" placeholder="Pilih Kategori" class="w-full mt-1" />
         </div>
         <div class="flex items-center gap-3 mb-3 flex-col">
             <label for="satuan" class="font-semibold w-full">Satuan</label>

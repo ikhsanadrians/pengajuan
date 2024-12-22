@@ -35,7 +35,8 @@ const filterName = ref("");
 const filteredBarangs = computed(() => {
     return props.barangs.filter(barang => {
         const matchesName = barang.namabarang.toLowerCase().includes(filterName.value.toLowerCase());
-        return matchesName;
+        const matchesCategory = selectedCategory.value ? barang.category_id === selectedCategory.value : true;
+        return matchesName && matchesCategory;
     });
 });
 
@@ -61,17 +62,17 @@ const triggerDeleteConfirmation = (barangId) => {
 };
 
 const refreshBarangs = () => {
-    router.reload({ only: ['barangs'] });
+    router.reload({ only: ['barangs', 'categories'] });
 };
 
 </script>
 
 <template>
     <Navbar />
-    <AddNewBarangModal v-model:currentVisibility="modalVisibilityAddNewBarang" :toastMessage="loadToastMessage"
-        :categories="props.categories" @refreshBarangs="refreshBarangs" />
-    <BarangEditModal :barangId="currentBarangId" v-model:currentVisibility="modalVisibilityEditBarang"
+    <AddNewBarangModal v-model:currentVisibility="modalVisibilityAddNewBarang" :categories="props.categories"
         :toastMessage="loadToastMessage" @refreshBarangs="refreshBarangs" />
+    <BarangEditModal :barangId="currentBarangId" v-model:currentVisibility="modalVisibilityEditBarang"
+        :toastMessage="loadToastMessage" @refreshBarangs="refreshBarangs" :categories="props.categories" />
     <ConfirmationDeleteBarang :currentVisibility="modalVisibilityConfirmationDeleteBarang"
         @update:currentVisibility="modalVisibilityConfirmationDeleteBarang = $event"
         :currentBarangToDeleteId="currentBarangToDeleteId"
@@ -88,7 +89,7 @@ const refreshBarangs = () => {
             <div class="wrapper flex gap-x-8 w-full">
                 <div class="wrapper w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-4">
                     <Card v-for="(barang, index) in filteredBarangs" :key="barang.id" style="overflow: hidden"
-                        class="w-full border-[1.8px] border-slate-200 flex flex-col items-center relative">
+                        class="w-full border-[1.8px] border-slate-200 flex flex-col items-center relative h-fit">
                         <template #header>
                             <p class="text-sm text-gray-500 absolute top-4 right-4">{{ barang.statusenabled ?
                                 'Aktif' : 'Tidak Aktif' }}
@@ -119,6 +120,12 @@ const refreshBarangs = () => {
                         <div class="inputs">
                             <label for="" class="text-slate-400">Nama Barang</label>
                             <InputText v-model="filterName" placeholder="Masukan Nama Barang" class="w-full mt-1" />
+                        </div>
+                        <div class="inputs mt-4">
+                            <label for="" class="text-slate-400">Kategori</label>
+                            <Select filter showClear v-model="selectedCategory" :options="props.categories"
+                                option-label="nameexternal" option-value="id" placeholder="Pilih Kategori"
+                                class="w-full mt-1" />
                         </div>
                         <div class="button-search">
                             <Button icon="pi pi-search" label="Cari Barang" class="w-full mt-8" />

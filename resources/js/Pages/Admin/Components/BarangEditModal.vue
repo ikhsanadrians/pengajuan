@@ -29,7 +29,6 @@ const emit = defineEmits(['update:currentVisibility', 'refreshBarangs']);
 
 const visible = ref(props.currentVisibility);
 
-
 // Data bindings
 const namabarang = ref('');
 const quantity = ref(0);
@@ -125,7 +124,8 @@ const updateBarang = async () => {
 </script>
 
 <template>
-    <Dialog @hide="closeDialog" v-model:visible="visible" modal header="Edit Barang" :style="{ width: '45rem' }">
+    <Dialog @hide="closeDialog" v-model:visible="visible" modal :header="`Edit Barang: ${namabarang}`"
+        :style="{ width: '45rem' }">
         <div class="flex items-center gap-3 mb-3 flex-col">
             <label for="nama-barang" class="font-semibold w-full">Nama Barang</label>
             <InputText id="nama-barang" class="flex-auto w-full" autocomplete="off" placeholder="Masukan Nama Barang"
@@ -138,8 +138,8 @@ const updateBarang = async () => {
         </div>
         <div class="flex items-center gap-3 mb-3 flex-col">
             <label for="category" class="font-semibold w-full">Kategori</label>
-            <Select v-model="category_id" :options="categories" optionLabel="name" placeholder="Pilih Kategori"
-                class="w-full mt-1" />
+            <Select showClear filter v-model="category_id" :options="categories" optionLabel="nameexternal"
+                optionValue="id" placeholder="Pilih Kategori" class="w-full mt-1" />
         </div>
         <div class="flex items-center gap-3 mb-3 flex-col">
             <label for="satuan" class="font-semibold w-full">Satuan</label>
