@@ -32,7 +32,22 @@ class AdminController extends Controller
         $statutes = DB::table('status')->get();
         $userRoles = $this->userRepository->getAllRolesUser();
 
-        return Inertia::render('Admin/Dashboard', ["transaksis" => $transaksis, 'barangs' => $barangs, 'departements' => $departements, 'statuses' => $statutes]);
+        $requestCount = $transaksis->where('status_id', 1)->count();
+        $ditinjauCount = $transaksis->where('status_id', 2)->count();
+        $approvedCount = $transaksis->where('status_id', 3)->count();
+        $ditolakCount = $transaksis->where('status_id', 4)->count();
+
+        return Inertia::render('Admin/Dashboard', [
+            "transaksis" => $transaksis,
+            'barangs' => $barangs,
+            'departements' => $departements,
+            'statuses' => $statutes,
+            'userRoles' => $userRoles,
+            'requestCount' => $requestCount,
+            'ditinjauCount' => $ditinjauCount,
+            'approvedCount' => $approvedCount,
+            'ditolakCount' => $ditolakCount
+        ]);
     }
 
 

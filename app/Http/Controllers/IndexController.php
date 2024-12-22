@@ -22,14 +22,27 @@ class IndexController extends Controller
 
 
 
-
     public function userIndex(){
         $transaksis = $this->pengajuanRepository->getAllPengajuanBarangsUser();
         $barangs = $this->barangRepository->getAllBarangs();
         $departements = $this->departemenRepository->getAllDepartements();
         $statutes = DB::table('status')->get();
 
-        return Inertia::render('User/Dashboard', ["transaksis" => $transaksis, 'barangs' => $barangs, 'departements' => $departements, 'statuses' => $statutes]);
+        $requestCount = $transaksis->where('status_id', 1)->count();
+        $ditinjauCount = $transaksis->where('status_id', 2)->count();
+        $approvedCount = $transaksis->where('status_id', 3)->count();
+        $ditolakCount = $transaksis->where('status_id', 4)->count();
+
+        return Inertia::render('User/Dashboard', [
+            "transaksis" => $transaksis,
+            'barangs' => $barangs,
+            'departements' => $departements,
+            'statuses' => $statutes,
+            'requestCount' => $requestCount,
+            'ditinjauCount' => $ditinjauCount,
+            'approvedCount' => $approvedCount,
+            'ditolakCount' => $ditolakCount
+        ]);
     }
 
 

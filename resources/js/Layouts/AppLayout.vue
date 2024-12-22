@@ -21,12 +21,13 @@ const logout = () => {
 
 <template>
     <div>
-        <Head :title="Pengajuan Barang | PT Intertama Trikencana Bersinar" />
+
+        <Head title="Pengajuan Barang | PT Intertama Trikencana Bersinar" />
         <Banner />
         <div class="min-h-screen bg-gray-100">
             <main>
                 <slot />
-            </main>
+            </main>PT Global (Paramarta Cardiovascular Hospital)
         </div>
     </div>
 </template>

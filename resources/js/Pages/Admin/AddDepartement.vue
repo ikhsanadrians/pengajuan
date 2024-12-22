@@ -7,7 +7,7 @@ import Select from 'primevue/select';
 import { ref, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
-import ConfirmationDeleteUser from './Components/ConfirmationDeleteUser.vue';
+import ConfirmationDeleteDepartement from './Components/ConfirmationDeleteDepartement.vue';
 import { router } from '@inertiajs/vue3';
 import UserEditModal from './Components/UserEditModal.vue';
 import AddNewDepartmentModal from './Components/AddNewDepartmentModal.vue';
@@ -37,14 +37,14 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
 const selectedRoleUser = ref(null);
 const filterName = ref("");
 
-const filteredUsers = computed(() => {
+const filteredDepartmenets = computed(() => {
     return props.departementsUser.filter(departement => {
         const matchesName = departement.namadepartemen.toLowerCase().includes(filterName.value.toLowerCase());
         return matchesName;
     });
 });
 
-const toggleModalAddUser = () => {
+const toggleModalAddDepartment = () => {
     modalVisibilityAddNewDepartement.value = true;
 };
 
@@ -52,14 +52,9 @@ const modalVisibilityAddNewDepartement = ref(false);
 const modalVisibilityEditDepartement = ref(false);
 const modalVisibilityConfirmationDeleteDepartement = ref(false);
 
-const currentUserId = ref(null);
 const currentDepartementId = ref(null);
-const currentUserToDeleteId = ref(null);
+const currentDepartmentToDeleteId = ref(null);
 
-const toggleEditUserModal = (userId) => {
-    modalVisibilityEditDepartement.value = true;
-    currentUserId.value = userId;
-};
 
 const toggleEditDepartementModal = (departementId) => {
     modalVisibilityEditDepartement.value = true;
@@ -68,30 +63,26 @@ const toggleEditDepartementModal = (departementId) => {
 
 const triggerDeleteConfirmation = (userId) => {
     modalVisibilityConfirmationDeleteDepartement.value = true;
-    currentUserToDeleteId.value = userId;
+    currentDepartmentToDeleteId.value = userId;
 };
 
 const refreshUsers = () => {
     router.reload({ only: ['departementsUser'] });
 };
+
 </script>
 
 <template>
     <Navbar />
-    <AddNewDepartmentModal  v-model:currentVisibility="modalVisibilityAddNewDepartement"
-        :toastMessage="loadToastMessage"
+    <AddNewDepartmentModal v-model:currentVisibility="modalVisibilityAddNewDepartement" :toastMessage="loadToastMessage"
         :rolesUserOption="rolesUser" :departementsUser="departementsUser" />
-    <DepartementEditModal 
-        :departmentId="currentDepartementId" 
-        v-model:currentVisibility="modalVisibilityEditDepartement"
-        :toastMessage="loadToastMessage" 
+    <DepartementEditModal :departmentId="currentDepartementId"
+        v-model:currentVisibility="modalVisibilityEditDepartement" :toastMessage="loadToastMessage"
         @refreshUsers="refreshUsers" />
-    <ConfirmationDeleteUser 
-        :currentVisibility="modalVisibilityConfirmationDeleteDepartement"
+    <ConfirmationDeleteDepartement :currentVisibility="modalVisibilityConfirmationDeleteDepartement"
         @update:currentVisibility="modalVisibilityConfirmationDeleteDepartement = $event"
-        :currentUserToDeleteId="currentUserToDeleteId"
-        @update:currentUserToDeleteId="currentUserToDeleteId = $event" 
-        :toastMessage="loadToastMessage"
+        :currentDepartmentToDeleteId="currentDepartmentToDeleteId"
+        @update:currentDepartmentToDeleteId="currentDepartmentToDeleteId = $event" :toastMessage="loadToastMessage"
         @refreshTransaction="refreshUsers" />
     <div class="container mx-auto py-5 px-20">
         <div class="add-users bg-white p-10 rounded-lg border-[1.8px] border-slate-200">
@@ -99,15 +90,14 @@ const refreshUsers = () => {
                 <div class="head font-semibold">
                     Master Data Departement
                 </div>
-                <Button @click="toggleModalAddUser" icon="pi pi-plus" label="Tambah Departement"
+                <Button @click="toggleModalAddDepartment" icon="pi pi-plus" label="Tambah Departement"
                     class="btn-tambah" />
             </div>
             <div class="wrapper flex gap-x-8 w-full">
                 <div class="wrapper w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-4">
-                    <Card v-for="(departement, index) in filteredUsers" :key="departement.id"
+                    <Card v-for="(departement, index) in filteredDepartmenets" :key="departement.id"
                         style="overflow: hidden"
                         class="w-full border-[1.8px] border-slate-200 flex flex-col items-center relative">
-
                         <template #header>
                             <p class="text-sm text-gray-500 absolute top-4 right-4">{{ departement.statusenabled ?
                                 'Aktif' : 'Tidak Aktif' }}
@@ -120,7 +110,6 @@ const refreshUsers = () => {
                         <template #title>
                             <h1 class="text-lg font-bold text-center">{{ departement.namadepartemen || '' }}</h1>
                         </template>
-
                         <template #footer>
                             <div class="flex w-full gap-4 mt-4">
                                 <Button @click="toggleEditDepartementModal(departement.id)" rounded icon="pi pi-pencil"

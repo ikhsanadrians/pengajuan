@@ -13,6 +13,7 @@ use App\Repositories\Interfaces\TransaksiRepositoryInterface;
 use App\Repositories\TransaksiRepository;
 use App\Repositories\Interfaces\TransaksiStokRepositoryInterface;
 use App\Repositories\TransaksiStokRepository;
+use App\Repositories\KategoriRepository;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -36,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransaksiStokRepository::class, function ($app) {
             return new TransaksiStokRepository();
         });
+        $this->app->bind(KategoriRepository::class, function ($app) {
+            return new KategoriRepository();
+        });
+
     }
 
     /**

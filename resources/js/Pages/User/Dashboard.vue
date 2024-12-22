@@ -15,8 +15,6 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 
-
-
 const confirm = useConfirm();
 const toast = useToast();
 const page = usePage();
@@ -41,6 +39,22 @@ const props = defineProps({
     statuses: {
         type: Array,
         default: () => []
+    },
+    requestCount: {
+        type: Number,
+        default: 0
+    },
+    ditinjauCount: {
+        type: Number,
+        default: 0
+    },
+    approvedCount: {
+        type: Number,
+        default: 0
+    },
+    ditolakCount: {
+        type: Number,
+        default: 0
     }
 });
 
@@ -69,7 +83,6 @@ const handleFilterChange = async (filters) => {
         isFiltered.value = false;
     }
 };
-
 
 const modalVisibility = ref(false);
 const modalVisibilityDetailRequest = ref(false);
@@ -122,7 +135,8 @@ const showConfirmationDialog = () => {
 <template>
     <Navbar />
     <div class="container mx-auto py-5 px-20">
-        <Chart :username="userData.username" />
+        <Chart :username="userData.username" :pengajuanCount="props.requestCount" :ditinjauCount="props.ditinjauCount"
+            :approveCount="props.approvedCount" :ditolakCount="props.ditolakCount" />
         <TableUser :pilihanStatus="statuses" :transaksidata="currentTransactions" @update:filter="handleFilterChange"
             :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
             @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event"

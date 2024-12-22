@@ -36,6 +36,7 @@ const closeDialog = () => {
 };
 
 const fetchDepartmentData = async () => {
+    isLoading.value = true;
     try {
         const response = await axios.get(`/admin/departements/${props.departmentId}`);
         if (response.status === 200) {
@@ -48,8 +49,13 @@ const fetchDepartmentData = async () => {
     } catch (error) {
         console.error('Error fetching department data:', error);
         props.toastMessage('error', 'Error', 'Terjadi kesalahan saat memuat data departemen!');
+    } finally {
+        isLoading.value = false;
     }
 };
+
+const isLoading = ref(false);
+
 
 const updateDepartment = async () => {
     let hasError = false;
@@ -104,17 +110,27 @@ watch(() => visible.value, (newVal) => {
 </script>
 
 <template>
-    <Dialog @hide="closeDialog" v-model:visible="visible" modal header="Edit Departemen" :style="{ width: '45rem' }">
-        <div class="flex items-center gap-3 mb-3 flex-col">
-            <label for="nama-departemen" class="font-semibold w-full">Nama Departemen</label>
-            <InputText id="nama-departemen" class="flex-auto w-full" autocomplete="off" placeholder="Masukan Nama Departemen" v-model="namadepartemen"/>
-        </div>
-        <div class="flex items-center gap-3 mb-3 flex-col">
-            <label for="alamat-departemen" class="font-semibold w-full">Alamat Departemen</label>
-            <Textarea id="alamat-departemen" class="flex-auto w-full" autocomplete="off" placeholder="Masukan Alamat Departemen" v-model="address"/>
-        </div>
-        <div class="confirm-button mt-6 w-full">
-            <Button @click="updateDepartment" icon="pi pi-save" label="Perbarui Departemen" class="w-full"/>
-        </div>
+    <Dialog @hide="closeDialog" v-model:visible="visible" modal :header='`Edit Departemen: ${namadepartemen}`'
+        :style="{ width: '45rem' }">
+        <template v-if="isLoading">
+            <div class="flex justify-center items-center">
+                <i class="pi pi-spin pi-spinner text-4xl"></i>
+            </div>
+        </template>
+        <template v-else>
+            <div class="flex items-center gap-3 mb-3 flex-col">
+                <label for="nama-departemen" class="font-semibold w-full">Nama Departemen</label>
+                <InputText id="nama-departemen" class="flex-auto w-full" autocomplete="off"
+                    placeholder="Masukan Nama Departemen" v-model="namadepartemen" />
+            </div>
+            <div class="flex items-center gap-3 mb-3 flex-col">
+                <label for="alamat-departemen" class="font-semibold w-full">Alamat Departemen</label>
+                <Textarea id="alamat-departemen" class="flex-auto w-full" autocomplete="off"
+                    placeholder="Masukan Alamat Departemen" v-model="address" />
+            </div>
+            <div class="confirm-button mt-6 w-full">
+                <Button @click="updateDepartment" icon="pi pi-save" label="Perbarui Departemen" class="w-full" />
+            </div>
+        </template>
     </Dialog>
 </template>

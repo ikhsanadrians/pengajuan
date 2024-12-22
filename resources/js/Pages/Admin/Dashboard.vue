@@ -42,6 +42,22 @@ const props = defineProps({
     userRoles: {
         type: Array,
         default: () => []
+    },
+    requestCount: {
+        type: Number,
+        default: 0
+    },
+    ditinjauCount: {
+        type: Number,
+        default: 0
+    },
+    approvedCount: {
+        type: Number,
+        default: 0
+    },
+    ditolakCount: {
+        type: Number,
+        default: 0
     }
 });
 
@@ -110,7 +126,9 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
 <template>
     <Navbar />
     <div class="container mx-auto py-5 px-20">
-        <Chart :username="userData.username" />
+        <Chart :username="userData.username" :pengajuanCount="props.requestCount" :ditinjauCount="props.ditinjauCount"
+            :approveCount="props.approvedCount" :ditolakCount="props.ditolakCount" />
+
         <TableAdmin :pilihanStatus="statuses" :transaksidata="currentTransactions" @update:filter="handleFilterChange"
             :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
             @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event"

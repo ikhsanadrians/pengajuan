@@ -10,7 +10,7 @@ use App\Http\Controllers\CetakanController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\KategoriController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,21 +59,26 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
                 Route::post('/delete',  [UserController::class, 'deleteUser'])->name('admin.userDelete');
             });
 
-            Route::prefix('barang')->group(function(){
+            Route::prefix('barangs')->group(function(){
                 Route::get('/',   [BarangController::class, 'adminBarangsIndex'])->name('admin.BarangsIndex');
+                Route::get('/{id}', [BarangController::class, 'adminBarangsShow'])->name('admin.BarangsShow');
+                Route::put('/{id}/update', [BarangController::class, 'adminBarangsUpdate'])->name('admin.BarangsUpdate');
                 Route::post('/add',  [BarangController::class, 'adminBarangsAdd'])->name('admin.BarangsAdd');
                 Route::post('/delete',  [BarangController::class, 'adminBarangsDelete'])->name('admin.BarangsDelete');
             });
 
             Route::prefix('kategori')->group(function(){
-                Route::get('/',   [BarangController::class, 'adminKategoriIndex'])->name('admin.KategoriIndex');
-                Route::post('/add',  [BarangController::class, 'adminKategoriAdd'])->name('admin.KategoriAdd');
-                Route::post('/delete',  [BarangController::class, 'adminKategoriDelete'])->name('admin.KategoriDelete');
+                Route::get('/',   [KategoriController::class, 'adminKategoriIndex'])->name('admin.KategoriIndex');
+                Route::get('/{id}', [KategoriController::class, 'adminKategoriShow'])->name('admin.KategoriShow');
+                Route::put('/{id}/update', [KategoriController::class, 'adminKategoriUpdate'])->name('admin.KategoriUpdate');
+                Route::post('/add',  [KategoriController::class, 'adminKategoriAdd'])->name('admin.KategoriAdd');
+                Route::post('/delete',  [KategoriController::class, 'adminKategoriDelete'])->name('admin.KategoriDelete');
             });
 
             Route::prefix('departements')->group(function(){
                 Route::get('/',   [DepartementController::class, 'adminDepartementIndex'])->name('admin.DepartementIndex');
                 Route::get('/{id}', [DepartementController::class, 'adminDepartementShow'])->name('admin.DepartementShow');
+                Route::put('/{id}/update', [DepartementController::class, 'adminDepartementUpdate'])->name('admin.DepartemenUpdate');
                 Route::post('/add',  [DepartementController::class, 'adminDepartementAdd'])->name('admin.DepartementAdd');
                 Route::post('/delete',  [DepartementController::class, 'adminDepartementDelete'])->name('admin.DepartementDelete');
             });

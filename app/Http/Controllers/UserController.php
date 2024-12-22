@@ -58,14 +58,12 @@ class UserController extends Controller
         try {
             $idToDelete = $request->userIdToDelete;
             $deleteProceed = $this->userRepository->deleteUser($idToDelete);
-    
+
             if ($deleteProceed) {
-                return response()->json([
-                    "message" => "Success, Berhasil Menghapus User",
-                    "data" => $deleteProceed
-                ], 200);
+                return redirect()->route('admin.userIndex')->with('success', 'User baru berhasil ditambahkan!');
+
             } else {
-                
+
                 return response()->json([
                     "message" => "Error, Gagal Menghapus User",
                     "data" => $deleteProceed
@@ -77,9 +75,9 @@ class UserController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-        
-        
-    } 
+
+
+    }
 
     public function updateUser(Request $request, $id)
     {
@@ -100,10 +98,8 @@ class UserController extends Controller
                     'message' => 'Failed to update user data.',
                 ], 400);
             }
+            return redirect()->route('admin.userIndex')->with('success', 'User baru berhasil ditambahkan!');
 
-            return response()->json([
-                'message' => 'User updated successfully.',
-            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while updating user data.',
@@ -112,11 +108,11 @@ class UserController extends Controller
         }
     }
 
-    
+
     public function showUser(String $id){
         try {
             $userData = $this->userRepository->getUserById($id);
-            
+
             if(!$userData){
                 return response()->json([
                      "message" => "Data User Tidak Ditemukan!",

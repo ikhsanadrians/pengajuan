@@ -14,27 +14,27 @@ class BarangRepository
 
     public function getBarangById($id)
     {
-        return DB::table('barang')->where('id', $id)->first();
+        return DB::table('barangs')->where('id', $id)->first();
     }
 
     public function searchBarang($keyword)
     {
-        return DB::table('barang')->where('nama', 'like', '%'.$keyword.'%')->get();
+        return DB::table('barangs')->where('nama', 'like', '%'.$keyword.'%')->get();
     }
 
     public function createBarang(array $data)
     {
-        return DB::table('barang')->insert($data);
+        return DB::table('barangs')->insert($data);
     }
 
     public function updateBarang($id, array $data)
     {
-        return DB::table('barang')->where('id', $id)->update($data);
+        return DB::table('barangs')->where('id', $id)->update($data);
     }
 
     public function deleteBarang($id)
     {
-        return DB::table('barang')->where('id', $id)->delete();
+        return DB::table('barangs')->where('id', $id)->delete();
     }
 }
 

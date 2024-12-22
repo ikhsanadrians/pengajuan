@@ -39,7 +39,7 @@ class DepartementController extends Controller
          if(!$perDepartement){
               return response()->json([
                 "message" => "Departement Tidak Ditemukan"
-              ]); 
+              ]);
          }
 
          return response()->json([
@@ -76,5 +76,60 @@ class DepartementController extends Controller
             ], 500);
         }    }
 
-    
+
+        public function adminDepartementUpdate(string $id, Request $request){
+            try {
+                $data = $request->all();
+                $updated = $this->departemenRepository->updateDepartement($id, $data);
+
+                if (!$updated) {
+                    return response()->json([
+                        'message' => 'Failed to update Department data.',
+                    ], 400);
+                }
+
+                return redirect()->route('admin.DepartementIndex')->with('success', 'User baru berhasil ditambahkan!');
+
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'An error occurred while updating Departement data.',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
+
+
+        }
+
+
+    public function adminDepartementDelete(Request $request)
+    {
+
+        try {
+            $idToDelete = $request->departmentIdToDelete;
+            $deleteProceed = $this->departemenRepository->deleteDepartement($idToDelete);
+
+            if ($deleteProceed) {
+                return redirect()->route('admin.DepartementIndex')->with('success', 'User baru berhasil Dihapus!');
+            } else {
+
+
+                return response()->json([
+                    "message" => "Error, Gagal Menghapus Depertement",
+                    "data" => $deleteProceed,
+                    "Request" => $request->idToDelete
+                ], 401);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error, Terjadi kesalahan sistem. Mohon coba lagi nanti.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+
+    }
+
+
+
 }

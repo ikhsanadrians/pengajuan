@@ -94,17 +94,20 @@ const logout = () => {
             <i class="pi pi-angle-right"></i>
             <p>Tambah User</p>
             </Link>
-            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
-                <i class="pi pi-angle-right"></i>
-                <p>Tambah Barang</p>
-            </div>
-            <div class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
-                <i class="pi pi-angle-right"></i>
-                <p>Tambah Kategori</p>
-            </div>
-            <Link href="/admin/departements/" class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
-                <i class="pi pi-angle-right"></i>
-                <p>Tambah Departement</p>
+            <Link href="/admin/barangs"
+                class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+            <i class="pi pi-angle-right"></i>
+            <p>Tambah Barang</p>
+            </Link>
+            <Link href="/admin/kategori/"
+                class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+            <i class="pi pi-angle-right"></i>
+            <p>Tambah Kategori</p>
+            </Link>
+            <Link href="/admin/departements/"
+                class="menu flex items-center text-[14px] cursor-pointer hover:text-emerald-500 text-gray-500">
+            <i class="pi pi-angle-right"></i>
+            <p>Tambah Departement</p>
             </Link>
         </div>
     </Popover>
