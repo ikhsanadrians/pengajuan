@@ -15,6 +15,21 @@ class AuthController extends Controller
      */
     public function login()
     {
+        // Redirect to the appropriate page if the user is already logged in
+        if (Auth::check()) {
+            $user = Auth::user();
+            switch ($user->role_id) {
+                case 1:
+                    return redirect()->route('admin');
+                case 2:
+                    return redirect()->route('owner');
+                case 3:
+                    return redirect()->route('user');
+                default:
+                    return redirect()->route('login')->withErrors(['error' => 'Unauthorized access.']);
+            }
+        }
+
         return Inertia::render('Auth/Login');
     }
 
@@ -39,7 +54,6 @@ class AuthController extends Controller
             // Regenerate session to prevent fixation attacks
             $request->session()->regenerate();
 
-
             $user = Auth::user();
 
             if ($user) {
@@ -50,9 +64,10 @@ class AuthController extends Controller
                         return redirect()->route('owner');
                     case 3:
                         return redirect()->route('user');
+                    default:
+                        return redirect()->route('login')->withErrors(['error' => 'Unauthorized access.']);
                 }
             }
-
         }
 
         // If authentication fails, redirect back to the login page with an error

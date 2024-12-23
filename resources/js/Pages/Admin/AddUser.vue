@@ -116,13 +116,13 @@ const refreshUsers = () => {
                                 <div class="roles flex justify-center self-center">
                                     <p class="text-sm text-gray-500 text-center flex items-center gap-x-1 bg-yellow-200 text-yellow-600 rounded-2xl w-fit px-4 py-1">
                                         <i class="pi pi-id-card"></i> 
-                                        {{ user.role.toUpperCase() }}
+                                        {{ user.role.toUpperCase() ? user.role.length > 7 ? user.role.substring(0, 7).toUpperCase() + '...' : user.role.toUpperCase() :  '-' }}
                                     </p>
                                 </div>
                                 <div class="departament flex justify-center self-center">
                                     <p class="text-sm text-gray-500 text-center flex items-center gap-x-1 bg-blue-200 text-blue-600 rounded-2xl w-fit px-4 py-1">
                                         <i class="pi pi-building"></i> 
-                                        {{ user.namadepartemen || '-' }}
+                                        {{ user.namadepartemen ? user.namadepartemen.length > 10 ? user.namadepartemen.substring(0, 10) + '...' : user.namadepartemen : '-' }}
                                     </p>
                                 </div>
                             </div>

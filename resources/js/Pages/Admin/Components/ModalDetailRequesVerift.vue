@@ -13,8 +13,6 @@ import { format } from 'date-fns';
 import { router } from '@inertiajs/vue3';
 import { checkIfVerifBtn } from '../Helpers/adminHelpers';
 
-
-
 const props = defineProps({
     currentVisibility: {
         type: Boolean,
@@ -40,15 +38,15 @@ const props = defineProps({
     toastMessage: {
         type: Function
     },
-
 });
 
 const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityConfirmationReject', 'update:currentBarangId']);
 const visible = ref(props.currentVisibility);
 const loading = ref(false);
 
-const currentEstimationDate = ref(null)
-const keteranganVerifikasi = ref(null)
+const currentEstimationDate = ref(null);
+const keteranganVerifikasi = ref(null);
+const editIndex = ref(null); // New state for tracking the edit index
 
 watch(() => props.currentVisibility, (newValue) => {
     visible.value = newValue;
@@ -56,7 +54,6 @@ watch(() => props.currentVisibility, (newValue) => {
         fetchCurrentTransaction();
     }
 });
-
 
 const currentTransaction = ref({});
 
@@ -67,6 +64,8 @@ const fetchCurrentTransaction = async () => {
             pengajuanId: props.currentTransactionId
         });
         currentTransaction.value = response.data.data;
+        // Set the current estimation date from the fetched transaction data
+        currentEstimationDate.value = currentTransaction.value.estimasi ? new Date(currentTransaction.value.estimasi) : null;
     } catch (error) {
         console.error('Error fetching transaction:', error);
     } finally {
@@ -92,18 +91,12 @@ const triggerConfirmationReject = (currentBarangId) => {
     }
 };
 
-
 const triggerConfirmationRejectPengajuan = (currentPengajuanId) => {
-
     emit('update:currentVisibilityConfirmationRejectPengajuan', true);
     emit('update:currentTransactionId', currentTransactionId);
-
 };
 
-
-
 const simpanVerifPengajuan = async () => {
-
     if (!keteranganVerifikasi.value) {
         props.toastMessage('warn', 'Peringatan', 'Keterangan Verifikasi harus diisi.');
         return;
@@ -116,26 +109,21 @@ const simpanVerifPengajuan = async () => {
 
     const formattedEstimationDate = format(new Date(currentEstimationDate.value), 'yyyy-MM-dd HH:mm:ss');
 
-
     try {
         const response = await axios.post('admin/simpan-verif-pengajuan', {
             pengajuanId: props.currentTransactionId,
             keterangan: keteranganVerifikasi.value,
             estimasi: formattedEstimationDate
-
         });
-
 
         if (response.data.success) {
             props.toastMessage('success', 'Info', 'Berhasil Melakukan Verifikasi');
             currentTransaction.value = response.data.data;
             router.reload();
             closeDialog();
-            currentEstimationDate.value = null
-            keteranganVerifikasi.value = null
+            currentEstimationDate.value = null;
+            keteranganVerifikasi.value = null;
         }
-
-
     } catch (error) {
         props.toastMessage('error', 'Info', 'Something Went Wrong!');
     } finally {
@@ -146,7 +134,6 @@ const simpanVerifPengajuan = async () => {
 const cetakDetailPengajuan = (code) => {
     window.open(route('cetakan-detail-pengajuan-user', code), '_blank');
 }
-
 
 watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
@@ -184,7 +171,7 @@ watch(visible, (newValue) => {
                         </td>
                         <td class="pl-8">
                             <div class="column">
-                                <label class="font-semibold" for="">Estimasi</label>
+                                <label class="font-semibold" for="">Estimasi Barang Diterima </label>
                                 <p>{{ currentTransaction.estimasi || 'Belum Diketahui' }}</p>
                             </div>
                         </td>
@@ -257,19 +244,7 @@ watch(visible, (newValue) => {
                                             class="rounded-full px-3 py-[.8px]">
                                             {{ transaksi.status }}
                                         </div>
-                                        <div class="btn-group flex gap-1">
-                                            <Button icon="pi pi-pencil" severity="info" rounded
-                                                style="font-size: .8rem">
-
-                                            </Button>
-                                            <Button @click="triggerConfirmationReject(transaksi.id)" icon="pi pi-trash"
-                                                severity="danger" rounded style="font-size: .8rem">
-                                            </Button>
-
-                                        </div>
-
                                     </div>
-
                                 </div>
                             </template>
                         </Card>
@@ -281,7 +256,6 @@ watch(visible, (newValue) => {
                     <label class="font-semibold mb-1" for="">Keterangan Verifikasi</label>
                     <IconField class="w-full">
                         <InputIcon class="pi pi-book" />
-
                         <InputText class="w-full" v-model="keteranganVerifikasi"
                             :value="currentTransaction.keterangan_approved ? currentTransaction.keterangan_approved : keteranganVerifikasi"
                             :disabled="currentTransaction.keterangan_approved ? true : false"
@@ -291,14 +265,15 @@ watch(visible, (newValue) => {
                 <div class="tanggal-tambahan flex flex-col">
                     <label class="font-semibold mb-1" for="">Estimasi Barang Diterima</label>
                     <DatePicker v-model="currentEstimationDate"
-                        :value="currentTransaction.estimasi ? new Date(currentTransaction.estimasi) : currentEstimationDate"
-                        dateFormat="d MM yy" showTime hourFormat="24" placeholder="Masukan Estimasi Tanggal" />
+                        dateFormat="d MM yy" showTime hourFormat="24" placeholder="Masukan Estimasi Tanggal" :disabled="currentTransaction.keterangan_approved ? true : false" />
                 </div>
             </div>
         </div>
         <div class="tools mt-4 flex justify-between">
             <div class="button-left flex gap-3">
-                <Button icon="pi pi-times" @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)"
+                <Button icon="pi pi-times" 
+                    @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)"
+                    :disabled="checkIfVerifBtn(currentTransaction.status_name).btnDisabled === 'true' ? true : false"
                     label="Tolak Pengajuan" severity="danger" outlined rounded />
                 <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
                     severity="info" rounded />
@@ -309,7 +284,6 @@ watch(visible, (newValue) => {
                     :icon="checkIfVerifBtn(currentTransaction.status_name).icon" @click="simpanVerifPengajuan()"
                     :label="checkIfVerifBtn(currentTransaction.status_name).text" severity="success" rounded />
             </div>
-
         </div>
     </Dialog>
 </template>

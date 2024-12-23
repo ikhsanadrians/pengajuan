@@ -40,6 +40,7 @@ class TransaksiRepository
     {
         $data = array_merge($data, [
             'statusenabled' => true,
+            'status_id' => 1,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);

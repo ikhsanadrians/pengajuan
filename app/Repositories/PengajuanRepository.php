@@ -297,15 +297,43 @@ class PengajuanRepository
     }
 }
 
-
 public function RejectPengajuan($id, $keterangan){
-    return DB::table('pengajuanbarang')->where('unique_id', $id)->update([
-        'status_id' => 4,
-        'keterangan_rejected' => $keterangan,
-        'updated_at' => Carbon::now()
-    ]);
-}
+    try {
+        // Mulai transaksi database
+        DB::beginTransaction();
 
+        // Update pengajuanbarang status to rejected
+        $affectedRowsPengajuan = DB::table('pengajuanbarang')->where('unique_id', $id)->update([
+            'status_id' => 4,
+            'keterangan_rejected' => $keterangan,
+            'updated_at' => Carbon::now()
+        ]);
+
+        // Update transaksi status to rejected for the corresponding pengajuan
+        $affectedRowsTransaksi = DB::table('transaksi')
+            ->where('pengajuan_id', function($query) use ($id) {
+                $query->select('id')->from('pengajuanbarang')->where('unique_id', $id);
+            })
+            ->update([
+                'status_id' => 4,
+                'updated_at' => now()
+            ]);
+
+        // Commit transaksi jika semua operasi berhasil
+        DB::commit();
+
+        return [
+            'affectedRowsPengajuan' => $affectedRowsPengajuan,
+            'affectedRowsTransaksi' => $affectedRowsTransaksi
+        ];
+    } catch (\Exception $e) {
+        // Rollback transaksi jika ada kesalahan
+        DB::rollBack();
+
+        \Log::error('Error rejecting pengajuan: ' . $e->getMessage());
+        throw $e; // Lempar error agar bisa ditangani oleh controller
+    }
+}
 
 
 }

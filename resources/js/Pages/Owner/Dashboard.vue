@@ -1,32 +1,147 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
 import Navbar from '@/Components/Navbar.vue';
 import Chart from '@/Components/Chart.vue';
-import TableApprovalRequest from '@/Components/TableApprovalRequest.vue';
+import TableOwner from './Components/TableOwner.vue'; // Changed to TableOwner
+import { ref, watch } from 'vue';
+import Toast from 'primevue/toast';
+import ModalDetailRequesVerift from '../Admin/Components/ModalDetailRequesVerift.vue';
 
-defineProps({
-//   transaksis: {
-    // type: Array,
-    // default: () => [],
-//   },
-});
+import { useConfirm } from "primevue/useconfirm";
+import axios from 'axios';
+import { useToast } from 'primevue/usetoast';
+import ConfirmationRejectPerBarang from '../Admin/Components/ConfirmationRejectPerBarang.vue';
+import ConfirmationRejectPerPengajuan from '../Admin/Components/ConfirmationRejectPerPengajuan.vue';
 
+const confirm = useConfirm();
+const toast = useToast();
 const page = usePage();
 const userData = page.props.auth.user;
 
+const currentTransactions = ref([]);
+const isFiltered = ref(false);
 
+const props = defineProps({
+    barangs: {
+        type: Array,
+        default: () => [],
+    },
+    departements: {
+        type: Array,
+        default: () => [],
+    },
+    transaksis: {
+        type: Array,
+        default: () => []
+    },
+    statuses: {
+        type: Array,
+        default: () => []
+    },
+    userRoles: {
+        type: Array,
+        default: () => []
+    },
+    requestCount: {
+        type: Number,
+        default: 0
+    },
+    ditinjauCount: {
+        type: Number,
+        default: 0
+    },
+    approvedCount: {
+        type: Number,
+        default: 0
+    },
+    ditolakCount: {
+        type: Number,
+        default: 0
+    }
+});
+
+watch(() => props.transaksis, (newValue) => {
+    if (!isFiltered.value) {
+        currentTransactions.value = newValue;
+    }
+}, { immediate: true });
+
+const handleFilterChange = async (filters) => {
+    const areAllFiltersEmpty = Object.values(filters).every(value => !value);
+
+    if (areAllFiltersEmpty) {
+        isFiltered.value = false;
+        currentTransactions.value = props.transaksis;
+        return;
+    }
+
+    try {
+        isFiltered.value = true;
+        const response = await axios.post('/owner/filter-pengajuan', { params: filters }); // Changed endpoint to owner
+        console.log(response.data.transaksis)
+        currentTransactions.value = response.data.transaksis;
+    } catch (error) {
+        loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
+        currentTransactions.value = props.transaksis;
+        isFiltered.value = false;
+    }
+};
+
+const handleRejectionSuccess = () => {
+    const modalDetailRef = ref(null);
+
+    if (modalDetailRef.value) {
+        modalDetailRef.value.fetchCurrentTransaction();
+    }
+};
+
+const modalVisibilityDetailRequest = ref(false);
+const currentPengajuanId = ref(null);
+const currentBarangId = ref(null);
+const modalVisibilityConfirmationReject = ref(false);
+const modalVisibilityConfirmationRejectPengajuan = ref(false);
+
+const handleBtn = (typeHandle) => {
+    typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
+};
+
+const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
+    toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
+};
 
 </script>
+
 <template>
-   <Navbar/>
-   <p>Superadmin</p>
-   <div class="container mx-auto py-5 px-20">
-    <Chart :username="userData.name" />
-    <!-- <TableApprovalRequest :transaksidata="transaksis"/> -->
-   </div>
+    <Navbar />
+    <div class="container mx-auto py-5 px-20">
+        <Chart :username="userData.username" :pengajuanCount="props.requestCount" :ditinjauCount="props.ditinjauCount"
+            :approveCount="props.approvedCount" :ditolakCount="props.ditolakCount" />
 
+        <TableOwner :pilihanStatus="statuses" :transaksidata="currentTransactions" @update:filter="handleFilterChange" 
+            :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
+            @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event"
+            :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event" />
+    </div>
+    <ConfirmationRejectPerBarang :currentVisibility="modalVisibilityConfirmationReject"
+        @update:currentVisibility="modalVisibilityConfirmationReject = $event" :currentBarangId="currentBarangId"
+        @update:currentBarangId="currentBarangId = $event" :toastMessage="loadToastMessage"
+        @rejectionSuccess="handleRejectionSuccess" />
 
+    <ConfirmationRejectPerPengajuan :currentVisibility="modalVisibilityConfirmationRejectPengajuan"
+        @update:currentVisibility="modalVisibilityConfirmationRejectPengajuan = $event"
+        :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event"
+        :toastMessage="loadToastMessage" :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
+        @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event" />
 
+    <ModalDetailRequesVerift :currentTransactionId="currentPengajuanId"
+        :currentVisibility="modalVisibilityDetailRequest"
+        @update:currentVisibility="modalVisibilityDetailRequest = $event"
+        :currentVisibilityConfirmationReject="modalVisibilityConfirmationReject"
+        @update:currentVisibilityConfirmationReject="modalVisibilityConfirmationReject = $event"
+        :currentVisibiltyConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan"
+        @update:currentVisibilityConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan = $event"
+        :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event"
+        :toastMessage="loadToastMessage" ref="modalDetailRequestVerif" />
+    <Toast position="bottom-right" group="br" />
 </template>

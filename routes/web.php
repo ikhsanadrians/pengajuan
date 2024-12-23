@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\OwnerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // Owner Routes - Only accessible by users with owner role
     Route::middleware('owner')->group(function () {
         Route::get('/owner', [IndexController::class, 'ownerIndex'])->name('owner');
+        Route::prefix("/owner")->group(function(){
+            Route::post('/accept-pengajuan-owner', [OwnerController::class, 'ownerAcceptPengajuan'])->name('owner-acc');
+        });
+    
     });
 
     // User Routes - Only accessible by users with user role
@@ -53,9 +58,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
             Route::prefix('users')->group(function(){
                 Route::get('/',   [AdminController::class, 'adminUsersIndex'])->name('admin.userIndex');
-                Route::post('/{id}',[UserController::class, 'showUser'])->name('admin.showUser');
-                Route::post('/{id}/update', [UserController::class, 'updateUser'])->name('admin.update');
+                Route::get('/{id}',[UserController::class, 'showUser'])->name('admin.showUser');
                 Route::post('/add',  [UserController::class, 'storeUser'])->name('admin.addUserPost');
+                Route::post('/{id}/update', [UserController::class, 'updateUser'])->name('admin.update');
                 Route::post('/delete',  [UserController::class, 'deleteUser'])->name('admin.userDelete');
             });
 

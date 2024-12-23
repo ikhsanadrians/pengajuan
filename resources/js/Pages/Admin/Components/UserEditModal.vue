@@ -67,9 +67,8 @@ const statusUsers = [
 
 // Fetch user data by ID
 const fetchUserData = async (userId) => {
-    isLoading.value = true; 
-    try {
-        const response = await axios.post(`/admin/users/${userId}`);
+    isLoading.value = true;     try {
+        const response = await axios.get(`/admin/users/${userId}`);
         const user = response.data.data;
 
         // Map fetched user data to the form fields

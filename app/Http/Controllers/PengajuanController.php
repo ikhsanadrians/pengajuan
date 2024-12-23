@@ -24,7 +24,6 @@ class PengajuanController extends Controller
     }
 
 
-
     public function simpanPengajuanUser(Request $request){
 
     $departemen_id = $request->input('departement');
