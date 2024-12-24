@@ -3,11 +3,10 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar.vue';
 import Chart from '@/Components/Chart.vue';
-import TableOwner from './Components/TableOwner.vue'; // Changed to TableOwner
+import TableOwner from './Components/TableOwner.vue';
 import { ref, watch } from 'vue';
 import Toast from 'primevue/toast';
-import ModalDetailRequesVerift from '../Admin/Components/ModalDetailRequesVerift.vue';
-
+import ModalDetailRequestVerift from './Components/ModalDetailRequestVerift.vue';
 import { useConfirm } from "primevue/useconfirm";
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
@@ -61,6 +60,7 @@ const props = defineProps({
     }
 });
 
+
 watch(() => props.transaksis, (newValue) => {
     if (!isFiltered.value) {
         currentTransactions.value = newValue;
@@ -78,14 +78,13 @@ const handleFilterChange = async (filters) => {
 
     try {
         isFiltered.value = true;
-        const response = await axios.post('/owner/filter-pengajuan', { params: filters }); // Changed endpoint to owner
-        console.log(response.data.transaksis)
-        currentTransactions.value = response.data.transaksis;
+        const response = await axios.post('/owner/filter-pengajuan', { params: filters });
+        currentTransactions.value = response.data.transaksis; // Ensure this matches the structure returned by the controller
     } catch (error) {
         loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
         currentTransactions.value = props.transaksis;
         isFiltered.value = false;
-    }
+    }   
 };
 
 const handleRejectionSuccess = () => {
@@ -102,12 +101,14 @@ const currentBarangId = ref(null);
 const modalVisibilityConfirmationReject = ref(false);
 const modalVisibilityConfirmationRejectPengajuan = ref(false);
 
-const handleBtn = (typeHandle) => {
-    typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
-};
-
 const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
+};
+
+// New method to close the modal after approval
+const handleApprovalSuccess = () => {
+    modalVisibilityDetailRequest.value = false; // Close the modal
+    loadToastMessage('success', 'Approved', 'Pengajuan berhasil disetujui!'); // Show success message
 };
 
 </script>
@@ -134,7 +135,7 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
         :toastMessage="loadToastMessage" :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
         @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event" />
 
-    <ModalDetailRequesVerift :currentTransactionId="currentPengajuanId"
+    <ModalDetailRequestVerift :currentTransactionId="currentPengajuanId"
         :currentVisibility="modalVisibilityDetailRequest"
         @update:currentVisibility="modalVisibilityDetailRequest = $event"
         :currentVisibilityConfirmationReject="modalVisibilityConfirmationReject"
@@ -142,6 +143,7 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
         :currentVisibiltyConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan"
         @update:currentVisibilityConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan = $event"
         :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event"
-        :toastMessage="loadToastMessage" ref="modalDetailRequestVerif" />
+        :toastMessage="loadToastMessage" ref="modalDetailRequestVerif" 
+        @approvalSuccess="handleApprovalSuccess" /> <!-- Added event listener for approval success -->
     <Toast position="bottom-right" group="br" />
 </template>

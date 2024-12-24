@@ -14,5 +14,5 @@ export const getStatusClass = (status) => {
 
 
 export const checkIfVerifBtn = (status) => {
-    return status === 'Ditinjau' ? { text: 'Sudah Verifikasi', icon: 'pi pi-check-circle', btnDisabled: 'true' } : { text: 'Simpan Verifikasi', icon: 'pi pi-book', btnDisabled: 'false' };
+    return status === 'Approved' ? { text: 'Sudah Verifikasi', icon: 'pi pi-check-circle', btnDisabled: 'true' } : { text: 'Approve Pengajuan', icon: 'pi pi-book', btnDisabled: 'false' };
 }

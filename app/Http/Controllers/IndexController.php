@@ -66,8 +66,4 @@ class IndexController extends Controller
 
 
 
-    public function ownerIndex(){
-        return Inertia::render('Owner/Dashboard');
-    }
-
 }

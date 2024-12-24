@@ -1,4 +1,3 @@
-
 <script setup>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -10,6 +9,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { ref, watch } from 'vue';
 import { truncate } from '../Helpers/OwnerHelpers';
 import { getStatusClass } from '../Helpers/OwnerHelpers';
+import { format } from 'date-fns';
 
 const dates = ref();
 const selectedStatus = ref();
@@ -32,6 +32,15 @@ const props = defineProps({
     },
     currentPengajuanId: {
         type: String,
+    }
+});
+
+// Ensure that transaksidata is reactive to changes from the parent component
+watch(() => props.transaksidata, (newValue) => {
+    if (newValue.length === 0) {
+        isLoading.value = false; // Stop loading if no data
+    } else {
+        isLoading.value = false; // Stop loading when data is available
     }
 });
 
@@ -66,13 +75,13 @@ const applyFilters = async () => {
     } finally {
         isLoading.value = false;
     }
-};
+}
 </script>
 <template>
     <div class="card mt-8">
         <DataTable :value="transaksidata" paginator :rows="25" tableStyle="min-width: 50rem"
-            class="shadow-md rounded-lg overflow-hidden" :loading="isLoading">
-            <template #header>
+        class="shadow-md rounded-lg overflow-hidden" :loading="isLoading">
+        <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <span class="text-lg font-bold">Pengajuan</span>
                     <div class="inputs flex items-center gap-x-3">

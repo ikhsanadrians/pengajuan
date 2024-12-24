@@ -28,9 +28,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Owner Routes - Only accessible by users with owner role
     Route::middleware('owner')->group(function () {
-        Route::get('/owner', [IndexController::class, 'ownerIndex'])->name('owner');
+        Route::get('/owner', [OwnerController::class, 'ownerIndex'])->name('owner');
         Route::prefix("/owner")->group(function(){
+            Route::post('/get-detail-pengajuan-owner', [PengajuanController::class, 'getDetailPengajuan'])->name('owner-detail-pengajuan');
             Route::post('/accept-pengajuan-owner', [OwnerController::class, 'ownerAcceptPengajuan'])->name('owner-acc');
+            Route::post('/filter-pengajuan',[OwnerController::class, 'filterPengajuanOwner'])->name('filter-pengajuan-owner');
         });
     
     });

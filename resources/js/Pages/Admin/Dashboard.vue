@@ -83,7 +83,6 @@ const handleFilterChange = async (filters) => {
     try {
         isFiltered.value = true;
         const response = await axios.post('/admin/filter-pengajuan', { params: filters });
-        console.log(response.data.transaksis)
         currentTransactions.value = response.data.transaksis;
     } catch (error) {
         loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
