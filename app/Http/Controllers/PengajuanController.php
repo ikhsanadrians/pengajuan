@@ -6,15 +6,17 @@ use App\Repositories\TransaksiRepository;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\PengajuanBarangRepositoryInterface;
 use App\Repositories\PengajuanRepository;
+use App\Http\Controllers\NotificationController;
 
 class PengajuanController extends Controller
 {
 
 
-    public function __construct(PengajuanRepository $pengajuanRepository, TransaksiRepository $transaksiRepository)
+    public function __construct(PengajuanRepository $pengajuanRepository, TransaksiRepository $transaksiRepository, NotificationController $notificationController)
     {
          $this->pengajuanRepository = $pengajuanRepository;
          $this->transaksiRepository = $transaksiRepository;
+         $this->notificationController = $notificationController;
     }
 
     public function index()
@@ -56,7 +58,9 @@ class PengajuanController extends Controller
 
     $pengajuan_id = $this->pengajuanRepository->createPengajuanBarang($pengajuanData);
 
-
+    // Send notification after saving pengajuan
+    $notificationMessage = "Pengajuan baru telah diajukan oleh " . auth()->user()->name . " untuk departemen " . $departemen_id . " dengan total kuantitas " . $totalQuantity . " dan keterangan '" . $keterangan . "'.";
+    $this->notificationController->sendNotification(new Request(['message' => $notificationMessage]));
 
     foreach ($barangGroups as $barangGroup) {
         $barangGroup['pengajuan_id'] = $pengajuan_id;

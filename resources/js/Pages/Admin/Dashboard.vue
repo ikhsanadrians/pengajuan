@@ -4,7 +4,7 @@ import { usePage } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar.vue';
 import Chart from '@/Components/Chart.vue';
 import TableAdmin from './Components/TableAdmin.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import Toast from 'primevue/toast';
 import ModalDetailRequestVerif from './Components/ModalDetailRequesVerift.vue';
 import { useConfirm } from "primevue/useconfirm";
@@ -14,10 +14,13 @@ import ConfirmationRejectPerBarang from './Components/ConfirmationRejectPerBaran
 import ConfirmationRejectPerPengajuan from './Components/ConfirmationRejectPerPengajuan.vue';
 
 
+
 const confirm = useConfirm();
 const toast = useToast();
 const page = usePage();
 const userData = page.props.auth.user;
+
+
 
 const currentTransactions = ref([]);
 const isFiltered = ref(false);
@@ -67,10 +70,6 @@ watch(() => props.transaksis, (newValue) => {
     }
 }, { immediate: true });
 
-
-
-
-
 const handleFilterChange = async (filters) => {
     const areAllFiltersEmpty = Object.values(filters).every(value => !value);
 
@@ -92,7 +91,6 @@ const handleFilterChange = async (filters) => {
 };
 
 const handleRejectionSuccess = () => {
-    // Access `fetchCurrentTransaction` in the `ModalDetailRequestVerif` component via its ref
     const modalDetailRef = ref(null);
 
     if (modalDetailRef.value) {
@@ -100,24 +98,21 @@ const handleRejectionSuccess = () => {
     }
 };
 
+
+
 const modalVisibilityDetailRequest = ref(false);
 const currentPengajuanId = ref(null);
 const currentBarangId = ref(null);
 const modalVisibilityConfirmationReject = ref(false);
 const modalVisibilityConfirmationRejectPengajuan = ref(false);
 
-
-
 const handleBtn = (typeHandle) => {
     typeHandle == "REQ" ? modalVisibility.value = true : typeHandle == "DETAIL" ? modalVisibilityRequest.value = true : null;
 };
 
-
 const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
 };
-
-
 
 
 </script>

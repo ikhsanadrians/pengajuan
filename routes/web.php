@@ -12,7 +12,7 @@ use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\OwnerController;
-
+use App\Http\Controllers\NotificationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,7 +25,10 @@ Route::post('/login', [AuthController::class, 'loginPost'])->name('loginPost');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-
+    
+Route::post('/notifications/send', [NotificationController::class, 'sendNotification']);
+Route::get('/notifications/stream', [NotificationController::class, 'streamNotifications']);
+Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
     // Owner Routes - Only accessible by users with owner role
     Route::middleware('owner')->group(function () {
         Route::get('/owner', [OwnerController::class, 'ownerIndex'])->name('owner');

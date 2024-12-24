@@ -241,6 +241,7 @@ class PengajuanRepository
         $query = DB::table('pengajuanbarang as pb')
             ->select('pb.*', 'sts.nameexternal') // Spesifik kolom untuk menghindari konflik
             ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
+            ->leftJoin('users as usr', 'usr.id' , '=' , 'pb.user_id')
             ->where('pb.statusenabled', '=', '1');
 
             if ($startDate && $endDate) {
@@ -293,6 +294,7 @@ class PengajuanRepository
         $query = DB::table('pengajuanbarang as pb')
             ->select('pb.*', 'sts.nameexternal') // Spesifik kolom untuk menghindari konflik
             ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
+            ->leftJoin('users as usr', 'usr.id' , '=' , 'pb.user_id')
             ->where('pb.statusenabled', '=', '1')
             ->where('pb.status_id', '!=', '4')
             ->where('pb.status_id', '!=', '1');
