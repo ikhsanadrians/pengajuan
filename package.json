@@ -21,8 +21,10 @@
     "dependencies": {
         "@primevue/themes": "^4.0.7",
         "date-fns": "^4.1.0",
+        "laravel-echo": "^1.17.1",
         "primeicons": "^7.0.0",
         "primevue": "^4.0.7",
+        "pusher-js": "^8.4.0-rc2",
         "tailwind-scrollbar": "^3.1.0"
     }
 }

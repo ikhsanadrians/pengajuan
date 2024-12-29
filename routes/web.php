@@ -25,11 +25,8 @@ Route::post('/login', [AuthController::class, 'loginPost'])->name('loginPost');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-    
-Route::post('/notifications/send', [NotificationController::class, 'sendNotification']);
-Route::get('/notifications/stream', [NotificationController::class, 'streamNotifications']);
-Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
-    // Owner Routes - Only accessible by users with owner role
+
+   // Owner Routes - Only accessible by users with owner role
     Route::middleware('owner')->group(function () {
         Route::get('/owner', [OwnerController::class, 'ownerIndex'])->name('owner');
         Route::prefix("/owner")->group(function(){
@@ -37,7 +34,7 @@ Route::post('/notifications/mark-as-read', [NotificationController::class, 'mark
             Route::post('/accept-pengajuan-owner', [OwnerController::class, 'ownerAcceptPengajuan'])->name('owner-acc');
             Route::post('/filter-pengajuan',[OwnerController::class, 'filterPengajuanOwner'])->name('filter-pengajuan-owner');
         });
-    
+
     });
 
     // User Routes - Only accessible by users with user role
@@ -98,6 +95,5 @@ Route::post('/notifications/mark-as-read', [NotificationController::class, 'mark
 
         });
     });
-
-
+    Broadcast::routes();
 Route::get('tools/cetakan-detail-pengajuan-user/{code}', [CetakanController::class, 'cetakanDetailPengajuanUser'])->name('cetakan-detail-pengajuan-user');

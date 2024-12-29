@@ -4,7 +4,7 @@ import { usePage } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar.vue';
 import Chart from '@/Components/Chart.vue';
 import TableAdmin from './Components/TableAdmin.vue';
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch } from 'vue';
 import Toast from 'primevue/toast';
 import ModalDetailRequestVerif from './Components/ModalDetailRequesVerift.vue';
 import { useConfirm } from "primevue/useconfirm";
@@ -12,7 +12,6 @@ import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 import ConfirmationRejectPerBarang from './Components/ConfirmationRejectPerBarang.vue';
 import ConfirmationRejectPerPengajuan from './Components/ConfirmationRejectPerPengajuan.vue';
-
 
 
 const confirm = useConfirm();
@@ -64,6 +63,13 @@ const props = defineProps({
     }
 });
 
+const rejectionData = ref(null);
+
+
+function handleRejectionSuccess(data) {
+    rejectionData.value = data;
+}
+
 watch(() => props.transaksis, (newValue) => {
     if (!isFiltered.value) {
         currentTransactions.value = newValue;
@@ -90,14 +96,6 @@ const handleFilterChange = async (filters) => {
     }
 };
 
-const handleRejectionSuccess = () => {
-    const modalDetailRef = ref(null);
-
-    if (modalDetailRef.value) {
-        modalDetailRef.value.fetchCurrentTransaction();
-    }
-};
-
 
 
 const modalVisibilityDetailRequest = ref(false);
@@ -113,6 +111,10 @@ const handleBtn = (typeHandle) => {
 const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
     toast.add({ severity: toastSeverity, summary: toastSummary, detail: toastMessageDetail, group: 'br', life: 3000 });
 };
+
+
+
+
 
 
 </script>
@@ -136,11 +138,7 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
 
     <ConfirmationRejectPerPengajuan :currentVisibility="modalVisibilityConfirmationRejectPengajuan"
         @update:currentVisibility="modalVisibilityConfirmationRejectPengajuan = $event"
-        :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event"
-        :toastMessage="loadToastMessage" :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
-        @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event" />
-
-    />
+        :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event" />
     <ModalDetailRequestVerif :currentTransactionId="currentPengajuanId"
         :currentVisibility="modalVisibilityDetailRequest"
         @update:currentVisibility="modalVisibilityDetailRequest = $event"
@@ -149,6 +147,7 @@ const loadToastMessage = (toastSeverity, toastSummary, toastMessageDetail) => {
         :currentVisibiltyConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan"
         @update:currentVisibilityConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan = $event"
         :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event"
-        :toastMessage="loadToastMessage" ref="modalDetailRequestVerif" />
+        :rejectionData="rejectionData" @update:rejectionData="rejectionData = $event" :toastMessage="loadToastMessage"
+        ref="modalDetailRequestVerif" />
     <Toast position="bottom-right" group="br" />
 </template>

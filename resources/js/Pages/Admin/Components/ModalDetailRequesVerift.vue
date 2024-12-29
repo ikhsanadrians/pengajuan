@@ -38,19 +38,29 @@ const props = defineProps({
     toastMessage: {
         type: Function
     },
+    rejectionData: {
+        type: Object,
+        default: null,
+    },
 });
 
-const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityConfirmationReject', 'update:currentBarangId']);
+const emit = defineEmits(['update:currentVisibility', 'update:currentVisibilityConfirmationReject', 'update:currentBarangId', 'refreshBarangs']);
 const visible = ref(props.currentVisibility);
 const loading = ref(false);
 
 const currentEstimationDate = ref(null);
 const keteranganVerifikasi = ref(null);
-const editIndex = ref(null); // New state for tracking the edit index
+const editIndex = ref(null);
 
 watch(() => props.currentVisibility, (newValue) => {
     visible.value = newValue;
     if (newValue) {
+        fetchCurrentTransaction();
+    }
+});
+
+watch(() => props.rejectionData, (newData) => {
+    if (newData) {
         fetchCurrentTransaction();
     }
 });
@@ -135,6 +145,14 @@ const cetakDetailPengajuan = (code) => {
     window.open(route('cetakan-detail-pengajuan-user', code), '_blank');
 }
 
+const copyText = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+        props.toastMessage('success', 'Info', 'Teks berhasil disalin.');
+    }).catch((error) => {
+        props.toastMessage('error', 'Info', 'Gagal menyalin teks.');
+    });
+}
+
 watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
 });
@@ -148,61 +166,46 @@ watch(visible, (newValue) => {
             <i class="pi pi-spin pi-spinner text-4xl"></i>
         </div>
         <div v-else-if="currentTransaction" class="dialog-wrappers">
-            <table>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="column">
-                                <label class="font-semibold" for="">Kode</label>
-                                <p>{{ currentTransaction.unique_id }}</p>
-                            </div>
-                        </td>
-                        <td class="pl-8">
-                            <div class="column">
-                                <label class="font-semibold" for="">Dept Tujuan</label>
-                                <p>{{ currentTransaction.namadepartement }}</p>
-                            </div>
-                        </td>
-                        <td class="pl-8">
-                            <div class="column">
-                                <label class="font-semibold" for="">Kuantitas</label>
-                                <p>{{ currentTransaction.quantity }}</p>
-                            </div>
-                        </td>
-                        <td class="pl-8">
-                            <div class="column">
-                                <label class="font-semibold" for="">Estimasi Barang Diterima </label>
-                                <p>{{ currentTransaction.estimasi || 'Belum Diketahui' }}</p>
-                            </div>
-                        </td>
-                        <td class="pl-8">
-                            <div class="column">
-                                <label class="font-semibold" for="">Tgl Pengajuan</label>
-                                <p>
-                                    {{ currentTransaction.created_at }}
-                                </p>
-                            </div>
-                        </td>
-                        <td class="pl-8">
-                            <div class="column">
-                                <label class="font-semibold" for="">Status</label>
-                                <p class="px-3 py-[.8px] rounded-full"
-                                    :class="getStatusClass(currentTransaction.status_name)">{{
-                                        currentTransaction.status_name }}</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="p-2">
+                    <label class="font-semibold block mb-1">Kode</label>
+                    <p>#{{ currentTransaction.unique_id }}</p>
+                </div>
+                <div class="p-2">
+                    <label class="font-semibold block mb-1">Departemen Tujuan</label>
+                    <p>{{ currentTransaction.namadepartement }}</p>
+                </div>
+                <div class="p-2">
+                    <label class="font-semibold block mb-1">Kuantitas</label>
+                    <p>{{ currentTransaction.quantity }}</p>
+                </div>
+                <div class="p-2">
+                    <label class="font-semibold block mb-1">Estimasi Barang Diterima</label>
+                    <p>{{ currentTransaction.estimasi || 'Belum Diketahui' }}</p>
+                </div>
+                <div class="p-2">
+                    <label class="font-semibold block mb-1">Tgl Pengajuan</label>
+                    <p>{{ currentTransaction.created_at }}</p>
+                </div>
+                <div class="p-2">
+                    <label class="font-semibold block mb-1">Status</label>
+                    <p class="px-3 py-1 rounded-full inline-block"
+                        :class="getStatusClass(currentTransaction.status_name)">
+                        {{ currentTransaction.status_name }}
+                    </p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-x-4 px-2">
+                <div class="mb-4">
+                    <label class="font-semibold block mb-1">Keterangan</label>
+                    <p>{{ currentTransaction.keterangan }}</p>
+                </div>
+                <div class="mb-4">
+                    <label class="font-semibold block mb-1">Diajukan Oleh</label>
+                    <p>{{ currentTransaction.user }}</p>
+                </div>
+            </div>
 
-            <div class="column mt-2">
-                <label class="font-semibold" for="">Keterangan</label>
-                <p>{{ currentTransaction.keterangan }}</p>
-            </div>
-            <div class="column mt-2">
-                <label class="font-semibold" for="">Diajukan Oleh</label>
-                <p>{{ currentTransaction.user }}</p>
-            </div>
             <div class="barangs mt-4">
                 <label for="username" class="font-semibold w-full">Daftar Barang Diajukan</label>
                 <div class="w-full max-h-[14rem] overflow-y-scroll scrollbar-thin mt-2">
@@ -244,6 +247,10 @@ watch(visible, (newValue) => {
                                             class="rounded-full px-3 py-[.8px]">
                                             {{ transaksi.status }}
                                         </div>
+                                        <Button @click="triggerConfirmationReject(transaksi.id)" icon="pi pi-trash"
+                                            severity="danger" rounded style="font-size: .8rem">
+                                        </Button>
+
                                     </div>
                                 </div>
                             </template>
@@ -264,18 +271,20 @@ watch(visible, (newValue) => {
                 </div>
                 <div class="tanggal-tambahan flex flex-col">
                     <label class="font-semibold mb-1" for="">Estimasi Barang Diterima</label>
-                    <DatePicker v-model="currentEstimationDate"
-                        dateFormat="d MM yy" showTime hourFormat="24" placeholder="Masukan Estimasi Tanggal" :disabled="currentTransaction.keterangan_approved ? true : false" />
+                    <DatePicker v-model="currentEstimationDate" dateFormat="d MM yy" showTime hourFormat="24"
+                        placeholder="Masukan Estimasi Tanggal"
+                        :disabled="currentTransaction.keterangan_approved ? true : false" />
                 </div>
             </div>
         </div>
         <div class="tools mt-4 flex justify-between">
             <div class="button-left flex gap-3">
-                <Button icon="pi pi-times" 
-                    @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)"
+                <Button icon="pi pi-times" @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)"
                     :disabled="checkIfVerifBtn(currentTransaction.status_name).btnDisabled === 'true' ? true : false"
                     label="Tolak Pengajuan" severity="danger" outlined rounded />
                 <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
+                    severity="info" rounded />
+                <Button icon="pi pi-copy" @click="copyText(currentTransaction.unique_id)" label="Salin Kode"
                     severity="info" rounded />
             </div>
             <div class="button-right">

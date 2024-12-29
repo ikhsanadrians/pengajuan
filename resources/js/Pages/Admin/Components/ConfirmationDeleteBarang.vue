@@ -17,7 +17,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['update:currentVisibility', 'refreshBarangs']);
+const emit = defineEmits(['update:currentVisibility', 'rejectionSuccess']);
 const visible = ref(props.currentVisibility);
 const loading = ref(false);
 const currentBarangId = ref(props.currentBarangToDeleteId);
@@ -29,6 +29,11 @@ watch(() => props.currentVisibility, (newValue) => {
 watch(() => props.currentBarangToDeleteId, (newValue) => {
     currentBarangId.value = newValue;
 });
+
+function onRejectSuccess() {
+    emit('rejectionSuccess', { barangId: currentBarangId, status: 'success' });
+}
+
 
 const closeDialog = () => {
     visible.value = false;
@@ -48,7 +53,8 @@ const deleteBarang = async () => {
         if (response.status == 200) {
             props.toastMessage('success', 'Info', 'Berhasil Menghapus Barang!');
             closeDialog();
-            emit('refreshBarangs');
+            onRejectSuccess()
+
         } else {
             props.toastMessage('error', 'Info', 'Gagal Menghapus Barang');
         }

@@ -27,6 +27,7 @@ class IndexController extends Controller
         $barangs = $this->barangRepository->getAllBarangs();
         $departements = $this->departemenRepository->getAllDepartements();
         $statutes = DB::table('status')->get();
+        $satuan = DB::table('satuan')->get();
 
         $requestCount = $transaksis->where('status_id', 1)->count();
         $ditinjauCount = $transaksis->where('status_id', 2)->count();
@@ -41,7 +42,8 @@ class IndexController extends Controller
             'requestCount' => $requestCount,
             'ditinjauCount' => $ditinjauCount,
             'approvedCount' => $approvedCount,
-            'ditolakCount' => $ditolakCount
+            'ditolakCount' => $ditolakCount,
+            'satuans' => $satuan
         ]);
     }
 

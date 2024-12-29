@@ -24,7 +24,7 @@ class BarangRepository
 
     public function createBarang(array $data)
     {
-        return DB::table('barangs')->insert($data);
+        return DB::table('barangs')->insertGetId($data);
     }
 
     public function updateBarang($id, array $data)

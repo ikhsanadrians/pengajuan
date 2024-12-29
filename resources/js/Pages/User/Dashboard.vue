@@ -40,6 +40,10 @@ const props = defineProps({
         type: Array,
         default: () => []
     },
+    satuans: {
+        type: Array,
+        default: () => []
+    },
     requestCount: {
         type: Number,
         default: 0
@@ -144,7 +148,7 @@ const showConfirmationDialog = () => {
     </div>
     <AddRequestBtn @click="handleBtn('REQ')" />
     <ModalDialog v-model:currentVisibility="modalVisibility" :barangdata="barangs" :departementData="departements"
-        :toastMessage="loadToastMessage" />
+        :toastMessage="loadToastMessage" :satuanData="satuans" />
     <ModalDetailRequest :currentTransactionId="currentPengajuanId" :currentVisibility="modalVisibilityDetailRequest"
         @update:currentVisibility="modalVisibilityDetailRequest = $event"
         :currentVisibilityConfirmationDelete="modalVisibilityConfirmationDelete"
