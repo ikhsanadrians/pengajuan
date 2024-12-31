@@ -33,6 +33,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::post('/get-detail-pengajuan-owner', [PengajuanController::class, 'getDetailPengajuan'])->name('owner-detail-pengajuan');
             Route::post('/accept-pengajuan-owner', [OwnerController::class, 'ownerAcceptPengajuan'])->name('owner-acc');
             Route::post('/filter-pengajuan',[OwnerController::class, 'filterPengajuanOwner'])->name('filter-pengajuan-owner');
+            Route::post('/reject-per-pengajuan', [PengajuanController::class,'rejectPengajuan'])->name('reject-per-pengajuan-owner');
+
         });
 
     });

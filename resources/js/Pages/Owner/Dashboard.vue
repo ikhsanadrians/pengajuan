@@ -10,8 +10,7 @@ import ModalDetailRequestVerift from './Components/ModalDetailRequestVerift.vue'
 import { useConfirm } from "primevue/useconfirm";
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
-import ConfirmationRejectPerBarang from '../Admin/Components/ConfirmationRejectPerBarang.vue';
-import ConfirmationRejectPerPengajuan from '../Admin/Components/ConfirmationRejectPerPengajuan.vue';
+import ConfirmationRejectPerPengajuan from './Components/ConfirmationRejectPerPengajuan.vue';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -84,7 +83,7 @@ const handleFilterChange = async (filters) => {
         loadToastMessage('error', 'Error', 'Gagal mengambil data filter.');
         currentTransactions.value = props.transaksis;
         isFiltered.value = false;
-    }   
+    }
 };
 
 const handleRejectionSuccess = () => {
@@ -119,7 +118,7 @@ const handleApprovalSuccess = () => {
         <Chart :username="userData.username" :pengajuanCount="props.requestCount" :ditinjauCount="props.ditinjauCount"
             :approveCount="props.approvedCount" :ditolakCount="props.ditolakCount" />
 
-        <TableOwner :pilihanStatus="statuses" :transaksidata="currentTransactions" @update:filter="handleFilterChange" 
+        <TableOwner :pilihanStatus="statuses" :transaksidata="currentTransactions" @update:filter="handleFilterChange"
             :isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest"
             @update:isCurrentDetailRequestModalOpen="modalVisibilityDetailRequest = $event"
             :currentPengajuanId="currentPengajuanId" @update:currentPengajuanId="currentPengajuanId = $event" />
@@ -143,7 +142,7 @@ const handleApprovalSuccess = () => {
         :currentVisibiltyConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan"
         @update:currentVisibilityConfirmationRejectPengajuan="modalVisibilityConfirmationRejectPengajuan = $event"
         :currentBarangId="currentBarangId" @update:currentBarangId="currentBarangId = $event"
-        :toastMessage="loadToastMessage" ref="modalDetailRequestVerif" 
-        @approvalSuccess="handleApprovalSuccess" /> <!-- Added event listener for approval success -->
+        :toastMessage="loadToastMessage" ref="modalDetailRequestVerif" @approvalSuccess="handleApprovalSuccess" />
+    <!-- Added event listener for approval success -->
     <Toast position="bottom-right" group="br" />
 </template>

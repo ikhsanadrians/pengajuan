@@ -76,13 +76,21 @@ const closeDialog = () => {
     emit('update:currentVisibility', false);
 };
 
+
+const triggerConfirmationRejectPengajuan = (currentPengajuanId) => {
+    emit('update:currentVisibilityConfirmationRejectPengajuan', true);
+    emit('update:currentTransactionId', currentPengajuanId);
+};
+
+
+
 const approvePengajuan = async (unique_id) => {
     const formattedEstimationDate = format(new Date(currentEstimationDate.value), 'yyyy-MM-dd HH:mm:ss');
 
     try {
         const response = await axios.post('owner/accept-pengajuan-owner', {
             uniqueId: unique_id,
-         });
+        });
 
         if (response.status == 200) {
             props.toastMessage('success', 'Info', response.data.message);
@@ -91,7 +99,7 @@ const approvePengajuan = async (unique_id) => {
             closeDialog();
             currentEstimationDate.value = null;
             keteranganVerifikasi.value = null;
-          } else {
+        } else {
             props.toastMessage('error', 'Info', response.data.message);
         }
     } catch (error) {
@@ -234,20 +242,25 @@ watch(visible, (newValue) => {
                 </div>
                 <div class="tanggal-tambahan flex flex-col">
                     <label class="font-semibold mb-1" for="">Estimasi Barang Diterima</label>
-                    <DatePicker v-model="currentEstimationDate"
-                        dateFormat="d MM yy" showTime hourFormat="24" placeholder="Masukan Estimasi Tanggal" :disabled="currentTransaction.keterangan_approved ? true : false" />
+                    <DatePicker v-model="currentEstimationDate" dateFormat="d MM yy" showTime hourFormat="24"
+                        placeholder="Masukan Estimasi Tanggal"
+                        :disabled="currentTransaction.keterangan_approved ? true : false" />
                 </div>
             </div>
         </div>
         <div class="tools mt-4 flex justify-between">
             <div class="button-left flex gap-3">
-                  <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
+                <Button icon="pi pi-times" @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)"
+                    :disabled="checkIfVerifBtn(currentTransaction.status_name).btnDisabled === 'true' ? true : false"
+                    label="Tolak Pengajuan" severity="danger" outlined rounded />
+                <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
                     severity="info" rounded />
             </div>
             <div class="button-right">
                 <Button
                     :disabled="checkIfVerifBtn(currentTransaction.status_name).btnDisabled === 'true' ? true : false"
-                    :icon="checkIfVerifBtn(currentTransaction.status_name).icon" @click="approvePengajuan(currentTransaction.unique_id)"
+                    :icon="checkIfVerifBtn(currentTransaction.status_name).icon"
+                    @click="approvePengajuan(currentTransaction.unique_id)"
                     :label="checkIfVerifBtn(currentTransaction.status_name).text" severity="success" rounded />
             </div>
         </div>

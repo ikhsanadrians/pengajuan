@@ -85,7 +85,6 @@ class PengajuanRepository
            ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
            ->leftJoin('users as usr', 'usr.id' , '=' , 'pb.user_id')
            ->where('pb.statusenabled', '=', '1')
-           ->where('pb.status_id', '!=', '4')
            ->where('pb.status_id', '!=', '1')
            ->orderBy('pb.created_at', 'desc')
            ->get();
