@@ -11,7 +11,7 @@ import InputIcon from 'primevue/inputicon';
 import DatePicker from 'primevue/datepicker';
 import { format } from 'date-fns';
 import { router } from '@inertiajs/vue3';
-import { checkIfVerifBtn } from '../Helpers/OwnerHelpers';
+import { checkIfVerifBtn, formatRupiah } from '../Helpers/OwnerHelpers';
 
 const props = defineProps({
     currentVisibility: {
@@ -58,18 +58,24 @@ const currentTransaction = ref({});
 
 const fetchCurrentTransaction = async () => {
     loading.value = true;
+    currentTransaction.value = {}; // Reset data awal
     try {
+        console.log('Fetching transaction data...');
         const response = await axios.post('owner/get-detail-pengajuan-owner', {
             pengajuanId: props.currentTransactionId
         });
         currentTransaction.value = response.data.data;
-        currentEstimationDate.value = currentTransaction.value.estimasi ? new Date(currentTransaction.value.estimasi) : null;
+        currentEstimationDate.value = currentTransaction.value.estimasi
+            ? new Date(currentTransaction.value.estimasi)
+            : null;
+        console.log('Fetched data:', currentTransaction.value);
     } catch (error) {
         console.error('Error fetching transaction:', error);
     } finally {
         loading.value = false;
     }
-}
+};
+
 
 const closeDialog = () => {
     visible.value = false;
@@ -116,6 +122,25 @@ const cetakDetailPengajuan = (code) => {
 watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
 });
+
+watch(() => props.currentVisibility, (newValue) => {
+    visible.value = newValue;
+    if (newValue && props.currentTransactionId) {
+        fetchCurrentTransaction();
+    } else {
+        currentTransaction.value = {}; // Reset saat modal ditutup
+    }
+});
+
+const imagePreviewVisible = ref(false);
+const selectedImage = ref(null);
+
+const openImagePreview = (image) => {
+    selectedImage.value = image;
+    imagePreviewVisible.value = true;
+}
+
+
 
 </script>
 
@@ -194,9 +219,16 @@ watch(visible, (newValue) => {
                             <template #content>
                                 <div class="twrappers flex items-start justify-between gap-x-3">
                                     <div class="twrapper-left flex gap-x-3">
-                                        <div
+                                        <div v-if="!transaksi.gambar_pendukung"
                                             class="icons-bg bg-emerald-100 w-fit h-fit p-4 grid place-items-center rounded-full">
                                             <i class="pi pi-box text-emerald-600" style="font-size: 20px"></i>
+                                        </div>
+                                        <div v-else class="gambar-pendukung h-24 w-24 relative group">
+                                            <img :src="transaksi.gambar_pendukung" alt="Gambar Pendukung"
+                                                class="zoomable h-full w-full object-cover rounded-md group-hover:brightness-75" />
+                                            <i @click="openImagePreview(transaksi.gambar_pendukung)"
+                                                class="pi pi-eye !hidden group-hover:!block text-white !text-2xl cursor-pointer"
+                                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
                                         </div>
                                         <div class="tblnbtn flex justify-between items-start w-full">
                                             <table class="w-fit">
@@ -204,10 +236,21 @@ watch(visible, (newValue) => {
                                                     <tr>
                                                         <th class="text-left">Nama Barang</th>
                                                         <td class="text-left px-3">{{ transaksi.namabarang }}</td>
+                                                        <div v-if="transaksi.harga_satuan" class="satuan-price">
+                                                            <th class="text-left">Harga Satuan</th>
+                                                            <td class="text-left px-3">{{
+                                                                formatRupiah(transaksi.harga_satuan) }}</td>
+                                                        </div>
                                                     </tr>
                                                     <tr>
                                                         <th class="text-left">Jumlah</th>
-                                                        <td class="text-left px-3">{{ transaksi.quantity }}</td>
+                                                        <td class="text-left px-3">{{ ` ${transaksi.quantity}
+                                                            ${transaksi.satuan}` }}</td>
+                                                        <div v-if="transaksi.harga_satuan" class="satuan-price">
+                                                            <th class="text-left">Harga Total</th>
+                                                            <td class="text-left px-3">{{
+                                                                formatRupiah(transaksi.harga_total) }}</td>
+                                                        </div>
                                                     </tr>
                                                     <tr>
                                                         <th class="text-left">Keterangan</th>
@@ -251,18 +294,21 @@ watch(visible, (newValue) => {
         <div class="tools mt-4 flex justify-between">
             <div class="button-left flex gap-3">
                 <Button icon="pi pi-times" @click="triggerConfirmationRejectPengajuan(currentTransaction.unique_id)"
-                    :disabled="checkIfVerifBtn(currentTransaction.status_name).btnDisabled === 'true' ? true : false"
-                    label="Tolak Pengajuan" severity="danger" outlined rounded />
+                    :disabled="checkIfVerifBtn(currentTransaction?.status_name).btnDisabled" label="Tolak Pengajuan"
+                    severity="danger" outlined rounded />
                 <Button icon="pi pi-print" @click="cetakDetailPengajuan(currentTransaction.unique_id)" label="Cetak"
                     severity="info" rounded />
             </div>
             <div class="button-right">
-                <Button
-                    :disabled="checkIfVerifBtn(currentTransaction.status_name).btnDisabled === 'true' ? true : false"
+                <Button :disabled="checkIfVerifBtn(currentTransaction?.status_name).btnDisabled"
                     :icon="checkIfVerifBtn(currentTransaction.status_name).icon"
                     @click="approvePengajuan(currentTransaction.unique_id)"
                     :label="checkIfVerifBtn(currentTransaction.status_name).text" severity="success" rounded />
             </div>
         </div>
+    </Dialog>
+    <Dialog v-model:visible="imagePreviewVisible" modal header="Image Preview" :style="{ width: '50rem' }"
+        @hide="imagePreviewVisible = false">
+        <img :src="selectedImage" alt="Preview" class="w-full h-auto" />
     </Dialog>
 </template>

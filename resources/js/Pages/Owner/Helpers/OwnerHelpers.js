@@ -12,7 +12,30 @@ export const getStatusClass = (status) => {
     };
 };
 
-
 export const checkIfVerifBtn = (status) => {
-    return (status === 'Approved' || status === 'Ditolak') ? { text: 'Sudah Verifikasi', icon: 'pi pi-check-circle', btnDisabled: 'true' } : { text: 'Approve Pengajuan', icon: 'pi pi-check', btnDisabled: 'false' };
-}
+    const isVerified = status === 'Approved' || status === 'Ditolak';
+
+    return {
+        text: isVerified ? 'Sudah Verifikasi' : 'Approve Pengajuan',
+        icon: isVerified ? 'pi pi-check-circle' : 'pi pi-check',
+        btnDisabled: isVerified
+    };
+};
+
+
+export const formatRupiah = (angka) => {
+    if (!angka) return 'Rp 0';
+    const numberString = angka.toString().replace(/[^,\d]/g, '');
+    const split = numberString.split(',');
+    const sisa = split[0].length % 3;
+    let rupiah = split[0].substr(0, sisa);
+    const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    if (ribuan) {
+        const separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+    }
+
+    rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+    return 'Rp ' + rupiah;
+};
