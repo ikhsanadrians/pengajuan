@@ -38,6 +38,7 @@ class TransaksiRepository
     }
     public function createTransaksi(array $data)
     {
+        \Log::info('Creating transaction with data:', $data);
         $data = array_merge($data, [
             'statusenabled' => true,
             'status_id' => 1,
@@ -45,7 +46,9 @@ class TransaksiRepository
             'updated_at' => Carbon::now()
         ]);
 
-        return DB::table('transaksi')->insert($data);
+        $id = DB::table('transaksi')->insertGetId($data);
+        \Log::info('Created transaction with ID:', ['id' => $id]);
+        return $id;
     }
 
 

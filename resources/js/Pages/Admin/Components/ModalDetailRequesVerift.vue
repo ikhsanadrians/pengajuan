@@ -157,6 +157,13 @@ watch(visible, (newValue) => {
     emit('update:currentVisibility', newValue);
 });
 
+const imagePreviewVisible = ref(false);
+const selectedImage = ref(null);
+
+const openImagePreview = (image) => {
+    selectedImage.value = image;
+    imagePreviewVisible.value = true;
+}
 </script>
 
 <template>
@@ -219,9 +226,16 @@ watch(visible, (newValue) => {
                             <template #content>
                                 <div class="twrappers flex items-start justify-between gap-x-3">
                                     <div class="twrapper-left flex gap-x-3">
-                                        <div
+                                        <div v-if="!transaksi.gambar_pendukung"
                                             class="icons-bg bg-emerald-100 w-fit h-fit p-4 grid place-items-center rounded-full">
                                             <i class="pi pi-box text-emerald-600" style="font-size: 20px"></i>
+                                        </div>
+                                        <div v-else class="gambar-pendukung h-24 w-24 relative group">
+                                            <img :src="transaksi.gambar_pendukung" alt="Gambar Pendukung"
+                                                class="zoomable h-full w-full object-cover rounded-md group-hover:brightness-75" />
+                                            <i @click="openImagePreview(transaksi.gambar_pendukung)"
+                                                class="pi pi-eye !hidden group-hover:!block text-white !text-2xl cursor-pointer"
+                                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
                                         </div>
                                         <div class="tblnbtn flex justify-between items-start w-full">
                                             <table class="w-fit">
@@ -294,5 +308,9 @@ watch(visible, (newValue) => {
                     :label="checkIfVerifBtn(currentTransaction.status_name).text" severity="success" rounded />
             </div>
         </div>
+    </Dialog>
+    <Dialog v-model:visible="imagePreviewVisible" modal header="Image Preview" :style="{ width: '50rem' }"
+        @hide="imagePreviewVisible = false">
+        <img :src="selectedImage" alt="Preview" class="w-full h-auto" />
     </Dialog>
 </template>

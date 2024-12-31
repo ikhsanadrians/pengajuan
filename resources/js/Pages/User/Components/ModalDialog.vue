@@ -58,52 +58,58 @@ const isSubmitting = ref(false);
 const selectedSatuan = ref(null);
 const src = ref(null);
 const checked = ref(false);
+const selectedFile = ref(null);
 
 
 
-function onFileSelect(event) {
+const onFileSelect = (event) => {
     const file = event.files[0];
     if (file) {
+        selectedFile.value = file; // Simpan file yang dipilih
         src.value = URL.createObjectURL(file);
+        console.log('File selected:', file); // Debug log
     } else {
+        selectedFile.value = null;
         src.value = null;
     }
 }
 
 
-// Fungsi untuk menambah barang ke daftar
 const tambahBarang = () => {
-    if ((checked.value && selectedBarang.value && jumlahBarang.value && keteranganBarang.value) ||
-        (!checked.value && selectedBarang.value?.id && jumlahBarang.value && keteranganBarang.value)) {
+    if ((checked.value && selectedBarang.value && jumlahBarang.value && keteranganBarang.value && selectedSatuan.value) ||
+        (!checked.value && selectedBarang.value?.id && jumlahBarang.value && keteranganBarang.value && selectedSatuan.value)) {
 
-        // Jika sedang mengedit, perbarui barang yang ada
+        // Membuat objek barang baru
+        const newBarang = {
+            barang_id: checked.value ? null : selectedBarang.value.id,
+            namabarang: checked.value ? selectedBarang.value : selectedBarang.value.namabarang,
+            jumlah: jumlahBarang.value,
+            keterangan: keteranganBarang.value,
+            satuan: selectedSatuan.value,
+            has_image: !!selectedFile.value, // Set true jika ada file
+            imageFile: selectedFile.value,   // Simpan file untuk upload
+            image: src.value                 // URL untuk preview
+        };
+
+
+
         if (editIndex.value !== null) {
-            daftarBarang.value[editIndex.value] = {
-                barang_id: checked.value ? null : selectedBarang.value.id,
-                namabarang: checked.value ? selectedBarang.value : selectedBarang.value.namabarang,
-                jumlah: jumlahBarang.value,
-                keterangan: keteranganBarang.value,
-                image: src.value // Simpan gambar di barang yang ditambahkan
-            };
+            daftarBarang.value[editIndex.value] = newBarang;
             editIndex.value = null;
         } else {
-            // Menambahkan barang baru dengan gambar
-            daftarBarang.value.unshift({
-                barang_id: checked.value ? null : selectedBarang.value.id,
-                namabarang: checked.value ? selectedBarang.value : selectedBarang.value.namabarang,
-                jumlah: jumlahBarang.value,
-                keterangan: keteranganBarang.value,
-                image: src.value // Simpan gambar di barang yang ditambahkan
-            });
+            daftarBarang.value.unshift(newBarang);
         }
 
-        // Reset input setelah menambah barang
+        // Reset semua input
         selectedBarang.value = null;
         jumlahBarang.value = null;
         keteranganBarang.value = '';
-        src.value = null; // Reset preview gambar
+        selectedSatuan.value = null;
+        src.value = null;
+        selectedFile.value = null;
     }
 };
+
 
 
 
@@ -118,6 +124,7 @@ const editBarang = (index) => {
     }
     jumlahBarang.value = barang.jumlah;
     keteranganBarang.value = barang.keterangan;
+    selectedSatuan.value = barang.satuan;
     editIndex.value = index;
 };
 
@@ -128,72 +135,80 @@ const deleteBarang = (index) => {
 
 const isTambahBarangDisabled = ref(true);
 
-watch([keteranganPengajuan, selectedDepartement], ([newKeterangan, newDepartement]) => {
-    isTambahBarangDisabled.value = !newKeterangan || !newDepartement;
+watch([keteranganPengajuan, selectedDepartement, selectedSatuan], ([newKeterangan, newDepartement, newSatuan]) => {
+    isTambahBarangDisabled.value = !newKeterangan || !newDepartement || !newSatuan;
 });
 
 const simpanPengajuan = async () => {
-    if (isSubmitting.value) return; // Prevent double submission
+    if (isSubmitting.value) return;
 
     try {
         isSubmitting.value = true;
 
-        // Validasi data sebelum submit
         if (!selectedDepartement.value?.id || !keteranganPengajuan.value || !daftarBarang.value.length) {
             props.toastMessage('error', 'Info', 'Mohon lengkapi semua data yang diperlukan');
             return;
         }
 
-        const barangDiajukan = daftarBarang.value.map(barang => {
+        const formData = new FormData();
+        formData.append('departement', selectedDepartement.value.id);
+        formData.append('keterangan', keteranganPengajuan.value);
+
+        // Prepare barangDiajukan data and handle files
+        const barangDiajukan = daftarBarang.value.map((barang, index) => {
+            // If this barang has an image, append it to FormData
+            if (barang.imageFile) {
+                formData.append(`images[]`, barang.imageFile);
+
+                // Return barang data with image info
+                return {
+                    barang_id: barang.barang_id,
+                    quantity: barang.jumlah,
+                    keterangan: barang.keterangan,
+                    status_id: 1,
+                    satuan_id: barang.satuan.id,
+                    nama_manual: barang.barang_id === null ? barang.namabarang : null,
+                    has_image: true,
+                    image_index: index
+                };
+            }
+
+            // Return barang data without image
             return {
                 barang_id: barang.barang_id,
                 quantity: barang.jumlah,
                 keterangan: barang.keterangan,
+                satuan_id: barang.satuan.id,
                 status_id: 1,
-                nama_manual: barang.barang_id === null ? barang.namabarang : null, // Nama barang manual
-                gambar_pendukung: barang.image ? barang.image : null, // Gambar barang
+                nama_manual: barang.barang_id === null ? barang.namabarang : null,
+                has_image: false
             };
         });
 
-        const formData = new FormData();
-        formData.append('departement', selectedDepartement.value.id);
-        formData.append('keterangan', keteranganPengajuan.value);
+        // Debug log
+        console.log('Sending barangDiajukan:', barangDiajukan);
+        console.log('FormData entries:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
         formData.append('barangDiajukan', JSON.stringify(barangDiajukan));
 
-        barangDiajukan.forEach((barang, index) => {
-            if (barang.gambar_pendukung) {
-                // Ambil gambar dari barang.image, bisa berupa URL atau file
-                const imageFile = barang.gambar_pendukung;
+        console.log(formData);
 
-                if (imageFile instanceof File) {
-                    // Jika barang.gambar_pendukung sudah berupa objek File, langsung tambahkan
-                    formData.append(`barangDiajukan[${index}][gambar_pendukung]`, imageFile, imageFile.name);
-                } else if (typeof imageFile === 'string' && imageFile.startsWith('data:image')) {
-                    // Jika gambar berupa URL base64 (data URI), Anda perlu mengonversinya menjadi file
-                    const byteCharacters = atob(imageFile.split(',')[1]);
-                    const byteArray = new Uint8Array(byteCharacters.length);
-
-                    for (let i = 0; i < byteCharacters.length; i++) {
-                        byteArray[i] = byteCharacters.charCodeAt(i);
-                    }
-
-                    const blob = new Blob([byteArray], { type: 'image/jpeg' }); // Sesuaikan tipe MIME jika perlu
-                    const file = new File([blob], `image_${index}.jpg`, { type: 'image/jpeg' });
-
-                    formData.append(`barangDiajukan[${index}][gambar_pendukung]`, file, file.name);
-                }
-            }
-        });
-
-        // Gunakan router.post dari Inertia sebagai gantinya
         await router.post('user/simpan-pengajuan-user', formData, {
+            forceFormData: true,
             preserveScroll: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
             onSuccess: () => {
                 props.toastMessage('success', 'Info', 'Berhasil Menambahkan Pengajuan');
                 resetAll();
                 closeDialog();
             },
             onError: (errors) => {
+                console.error('Upload error:', errors);
                 const errorMessage = Object.values(errors)[0] || 'Gagal Menambahkan Pengajuan';
                 props.toastMessage('error', 'Info', errorMessage);
             },
@@ -209,13 +224,6 @@ const simpanPengajuan = async () => {
     }
 };
 
-
-
-
-
-
-
-
 const resetAll = () => {
     selectedDepartement.value = null;
     keteranganPengajuan.value = '';
@@ -223,6 +231,7 @@ const resetAll = () => {
     selectedBarang.value = null;
     jumlahBarang.value = null;
     keteranganBarang.value = '';
+    selectedSatuan.value = null;
     editIndex.value = null;
 };
 </script>
@@ -236,7 +245,7 @@ const resetAll = () => {
         </div>
         <div class="flex items-center gap-3 mb-3 flex-col w-full">
             <label for="departement" class="font-semibold w-full">Departemen</label>
-            <Select v-model="selectedDepartement" :options="departementData" :filter="true"
+            <Select show-clear v-model="selectedDepartement" :options="departementData" :filter="true"
                 :filter-fields="['namadepartemen']" optionLabel="namadepartemen" placeholder="Pilih Departement"
                 class="w-full">
                 <template #value="slotProps">
@@ -262,7 +271,7 @@ const resetAll = () => {
             </div>
             <div class="flex justify-between w-full gap-x-2">
                 <div v-if="!checked" class="w-full md:w-[25rem]">
-                    <Select class="w-full" v-model="selectedBarang" :options="barangdata" :filter="true"
+                    <Select show-clear class="w-full" v-model="selectedBarang" :options="barangdata" :filter="true"
                         :filter-fields="['namabarang']" optionLabel="namabarang" placeholder="Pilih Barang">
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex items-center">
@@ -283,8 +292,9 @@ const resetAll = () => {
                     <InputText class="w-full" v-model="selectedBarang" placeholder="Masukkan Nama Barang" />
                 </div>
                 <InputNumber :min="1" v-model="jumlahBarang" placeholder="QTY Barang" />
-                <Select v-model="selectedSatuan" :options="satuanData" :filter="true" :filter-fields="['namasatuan']"
-                    optionLabel="namasatuan" placeholder="Pilih Satuan" class="w-full md:w-[20rem]">
+                <Select show-clear v-model="selectedSatuan" :options="satuanData" :filter="true"
+                    :filter-fields="['namasatuan']" optionLabel="namasatuan" placeholder="Pilih Satuan"
+                    class="w-full md:w-[20rem]">
                     <template #value="slotProps">
                         <div v-if="slotProps.value" class="flex items-center">
                             <div>{{ slotProps.value.namasatuan }}</div>
@@ -302,17 +312,18 @@ const resetAll = () => {
                 <InputText class="w-[35%]" v-model="keteranganBarang" placeholder="Keterangan Per Barang" />
                 <Button rounded class="!p-5" :icon="editIndex == null ? 'pi pi-plus' : 'pi pi-pencil'" aria-label="Save"
                     @click="tambahBarang"
-                    :disabled="isTambahBarangDisabled || !selectedBarang || !jumlahBarang || !keteranganBarang" />
+                    :disabled="isTambahBarangDisabled || !selectedBarang || !jumlahBarang || !keteranganBarang || !selectedSatuan" />
             </div>
 
             <div class="upload-gambar flex flex-col justify-start items-start">
                 <label for="username" class="font-semibold w-full">File / Gambar Pendukung Barang ( Opsional )</label>
                 <div class="flex gap-x-4">
-                    <FileUpload mode="basic" @select="onFileSelect" customUpload auto severity="secondary"
-                        class="p-button-outlined mt-1" />
+                    <FileUpload mode="basic" @select="onFileSelect" customUpload :auto="true" severity="secondary"
+                        class="p-button-outlined mt-1" accept="image/*" />
                     <div v-if="src" class="gambar h-20 w-28 relative overflow-hidden">
                         <img v-if="src" :src="src" alt="Preview Gambar"
-                            class="shadow-md rounded-xl w-full h-full sm:w-64" style="filter: grayscale(100%)" />
+                            class="shadow-md rounded-xl w-full h-full sm:w-64 object-cover"
+                            style="filter: grayscale(100%)" />
                     </div>
                 </div>
 
