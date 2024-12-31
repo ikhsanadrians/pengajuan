@@ -121,7 +121,7 @@ class PengajuanRepository
         $pengajuan = DB::table('pengajuanbarang as pb')
             ->leftJoin('status as sts', 'sts.id', '=', 'pb.status_id')
             ->leftJoin('departements as d', 'd.id', '=', 'pb.departemen_id')
-            ->leftJoin('users as usr', 'usr.id', '=' , 'pb.user_id' )
+            ->leftJoin('users as usr', 'usr.id', '=' , 'pb.user_id')
             ->where('pb.unique_id', '=', $uniqueCode)
             ->select(
         'pb.*',
@@ -139,10 +139,12 @@ class PengajuanRepository
                 ->where('tr.pengajuan_id', '=', $pengajuan->id)
                 ->leftJoin('barangs as b', 'b.id', '=', 'tr.barang_id')
                 ->leftJoin('status as s', 's.id' , 'tr.status_id')
+                ->leftJoin('satuan as stn', 'stn.id' , '=', 'tr.satuan_id')
                 ->select(
                     'tr.*',
                     'b.namabarang',
-                    's.nameexternal as status'
+                    's.nameexternal as status',
+                    'stn.namasatuan as satuan'
                 )
                 ->get();
 

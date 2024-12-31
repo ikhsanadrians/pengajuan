@@ -4,7 +4,9 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import axios from 'axios';
-import { getStatusClass } from '../Helpers/userHelpers';
+import { getStatusClass, formatRupiah } from '../Helpers/userHelpers';
+
+
 
 const props = defineProps({
     currentVisibility: {
@@ -160,10 +162,21 @@ const selectedImage = ref('');
                                                     <tr>
                                                         <th class="text-left">Nama Barang</th>
                                                         <td class="text-left px-3">{{ transaksi.namabarang }}</td>
+                                                        <div v-if="transaksi.harga_satuan" class="satuan-price">
+                                                            <th class="text-left">Harga Satuan</th>
+                                                            <td class="text-left px-3">{{
+                                                                formatRupiah(transaksi.harga_satuan) }}</td>
+                                                        </div>
                                                     </tr>
                                                     <tr>
                                                         <th class="text-left">Jumlah</th>
-                                                        <td class="text-left px-3">{{ transaksi.quantity }}</td>
+                                                        <td class="text-left px-3">{{ ` ${transaksi.quantity}
+                                                            ${transaksi.satuan}` }}</td>
+                                                        <div v-if="transaksi.harga_satuan" class="satuan-price">
+                                                            <th class="text-left">Harga Total</th>
+                                                            <td class="text-left px-3">{{
+                                                                formatRupiah(transaksi.harga_total) }}</td>
+                                                        </div>
                                                     </tr>
                                                     <tr>
                                                         <th class="text-left">Keterangan</th>

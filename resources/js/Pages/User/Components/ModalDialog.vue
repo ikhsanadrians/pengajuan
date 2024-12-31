@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch, defineEmits, computed } from 'vue';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
@@ -59,7 +59,10 @@ const selectedSatuan = ref(null);
 const src = ref(null);
 const checked = ref(false);
 const selectedFile = ref(null);
-
+const hargaSatuan = ref(null);
+const totalHarga = computed(() => {
+    return (hargaSatuan.value || 0) * (jumlahBarang.value || 0);
+});
 
 
 const onFileSelect = (event) => {
@@ -88,7 +91,9 @@ const tambahBarang = () => {
             satuan: selectedSatuan.value,
             has_image: !!selectedFile.value, // Set true jika ada file
             imageFile: selectedFile.value,   // Simpan file untuk upload
-            image: src.value                 // URL untuk preview
+            image: src.value,                 // URL untuk preview
+            harga_satuan: hargaSatuan.value,
+            harga_total: totalHarga.value
         };
 
 
@@ -169,6 +174,8 @@ const simpanPengajuan = async () => {
                     satuan_id: barang.satuan.id,
                     nama_manual: barang.barang_id === null ? barang.namabarang : null,
                     has_image: true,
+                    harga_satuan: barang.harga_satuan,
+                    harga_total: barang.harga_total,
                     image_index: index
                 };
             }
@@ -181,6 +188,8 @@ const simpanPengajuan = async () => {
                 satuan_id: barang.satuan.id,
                 status_id: 1,
                 nama_manual: barang.barang_id === null ? barang.namabarang : null,
+                harga_satuan: barang.harga_satuan,
+                harga_total: barang.harga_total,
                 has_image: false
             };
         });
@@ -232,6 +241,7 @@ const resetAll = () => {
     jumlahBarang.value = null;
     keteranganBarang.value = '';
     selectedSatuan.value = null;
+    hargaSatuan.value = null
     editIndex.value = null;
 };
 </script>
@@ -314,21 +324,29 @@ const resetAll = () => {
                     @click="tambahBarang"
                     :disabled="isTambahBarangDisabled || !selectedBarang || !jumlahBarang || !keteranganBarang || !selectedSatuan" />
             </div>
-
-            <div class="upload-gambar flex flex-col justify-start items-start">
-                <label for="username" class="font-semibold w-full">File / Gambar Pendukung Barang ( Opsional )</label>
-                <div class="flex gap-x-4">
-                    <FileUpload mode="basic" @select="onFileSelect" customUpload :auto="true" severity="secondary"
-                        class="p-button-outlined mt-1" accept="image/*" />
-                    <div v-if="src" class="gambar h-20 w-28 relative overflow-hidden">
-                        <img v-if="src" :src="src" alt="Preview Gambar"
-                            class="shadow-md rounded-xl w-full h-full sm:w-64 object-cover"
-                            style="filter: grayscale(100%)" />
+            <div class="flex gap-x-8">
+                <div class="upload-gambar flex flex-col justify-start items-start">
+                    <label for="username" class="font-semibold w-full">File / Gambar ( Opsional )</label>
+                    <div class="flex gap-x-4">
+                        <FileUpload mode="basic" @select="onFileSelect" customUpload :auto="true" severity="secondary"
+                            class="p-button-outlined mt-1" accept="image/*" />
+                        <div v-if="src" class="gambar h-20 w-28 relative overflow-hidden">
+                            <img v-if="src" :src="src" alt="Preview Gambar"
+                                class="shadow-md rounded-xl w-full h-full sm:w-64 object-cover"
+                                style="filter: grayscale(100%)" />
+                        </div>
                     </div>
                 </div>
-
-
+                <div class="harga flex flex-col">
+                    <label class="font-semibold">Harga ( Opsional )</label>
+                    <InputText class="w-full mt-1" placeholder="Harga Per Barang" v-model="hargaSatuan" />
+                </div>
+                <div class="harga flex flex-col">
+                    <label class="font-semibold">Total Harga</label>
+                    <h1 class="text-xl font-semibold">Rp {{ totalHarga.toLocaleString() }}</h1>
+                </div>
             </div>
+
         </div>
         <label for="username" class="font-semibold w-full">Daftar Barang Diajukan</label>
         <div class="w-full h-[10rem] overflow-y-scroll scrollbar-thin">

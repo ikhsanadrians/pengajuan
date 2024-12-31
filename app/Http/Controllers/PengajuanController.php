@@ -106,6 +106,8 @@ class PengajuanController extends Controller
                     'keterangan' => $barangGroup['keterangan'],
                     'status_id' => $barangGroup['status_id'],
                     'satuan_id' => $barangGroup['satuan_id'],
+                    'harga_satuan' => $barangGroup['harga_satuan'],
+                    'harga_total' => $barangGroup['harga_total']
                 ];
 
                 if (isset($barangGroup['gambar_pendukung'])) {
